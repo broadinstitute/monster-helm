@@ -26,6 +26,10 @@ function check_chart_names () {
 function package_charts () {
   local -ra chart_paths=(${@/#/'/charts/'})
 
+  # Clean out any leftover packages.
+  rm -f ${DEPLOY_DIR}/*
+
+  # Create new packages from current versions.
   docker run --rm -it \
     -v ${REPO_ROOT}/charts:/charts \
     -v ${DEPLOY_DIR}:/deploy \
