@@ -18,9 +18,48 @@ spec:
             claimName: {{ .Release.Name }}-data-storage
         - name: config
           emptyDir: {}
+      initContainers:
+        # Set up UID/GID on data storage before creating
+        # the corresponding user.
+        - name: set-permissions
+          image: alpine
+          volumeMounts:
+            - name: data
+              mountPath: /data
+          command: ["sh", "-c"]
+          args: ["chown -R 1003:1005 /data"]
+        # Register a virtual user, rooted in the data volume.
+        - name: add-user
+          image: crazymax/pure-ftpd:1.0.49
+          volumeMounts:
+            - name: config
+              mountPath: /etc/pureftpd
+          env:
+            - name: PURE_PASSWDFILE
+              value: /etc/pureftpd/pureftpd.passwd
+            - name: PURE_DBFILE
+              value: /etc/pureftpd/pureftpd.pdb
+            {{- with .Values.user.passwordSecret }}
+            - name: PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .secretName }}
+                  key: {{ .secretKey }}
+            {{- end}}
+          command: ["sh", "-c"]
+          args:
+            - |-
+              echo -e "${PASSWORD}\n${PASSWORD}" | \
+              pure-pw useradd {{ .Values.user.username }} \
+                -u 1003 -g 1005 -d /home/{{ .Values.user.username }} -m
       containers:
         - name: ftp-server
           image: crazymax/pure-ftpd:1.0.49
+          volumeMounts:
+            - name: data
+              mountPath: /home/{{ .Values.user.username }}
+            - name: config
+              mountPath: /data
           env:
             - name: K8S_NAMESPACE
               valueFrom:
@@ -41,8 +80,3 @@ spec:
               protocol: TCP
             {{- end}}
           {{- end}}
-          volumeMounts:
-            - name: data
-              mountPath: /home
-            - name: config
-              mountPath: /data

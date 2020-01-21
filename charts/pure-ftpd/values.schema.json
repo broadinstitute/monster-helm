@@ -33,7 +33,22 @@
         }
       },
       "required": ["port", "passiveMode"]
+    },
+    "user": {
+      "type": "object",
+      "properties": {
+        "username": { "type": "string" },
+        "passwordSecret": {
+          "type": "object",
+          "properties": {
+            "secretName": { "type": "string" },
+            "secretKey": { "type": "string" }
+          },
+          "required": ["secretName", "secretKey"]
+        }
+      },
+      "required": ["username", "passwordSecret"]
     }
   },
-  "required": ["storage", "connection"]
+  "required": ["storage", "connection", "user"]
 }
