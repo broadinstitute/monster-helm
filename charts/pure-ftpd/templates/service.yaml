@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}
+spec:
+  selector:
+    app: {{ .Release.Name }}
+  ports:
+    - name: command-port
+      port: {{ .Values.connection.port }}
+      targetPort: command-port
+      protocol: TCP
+    {{- with .Values.connection.passiveMode }}
+    {{- range $i, $p := (untilStep (int .minPort) (int (add .maxPort 1)) 1) }}
+    - name: passive-port-{{$i}}
+      port: {{$p}}
+      targetPort: passive-port-{{$i}}
+      protocol: TCP
+    {{- end}}
+    {{- end}}

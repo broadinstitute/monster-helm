@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-data-storage
+        - name: config
+          emptyDir: {}
+      containers:
+        - name: ftp-server
+          image: crazymax/pure-ftpd:1.0.49
+          env:
+            - name: K8S_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: PASSIVE_IP
+              value: {{ .Release.Name }}.$(K8S_NAMESPACE)
+            {{- with .Values.connection.passiveMode }}
+            - name: PASSIVE_PORT_RANGE
+              value: {{ .minPort }}:{{ .maxPort }}
+          ports:
+            - name: command-port
+              containerPort: 2100
+              protocol: TCP
+            {{- range $i, $p := (untilStep (int .minPort) (int (add .maxPort 1)) 1) }}
+            - name: passive-port-{{$i}}
+              containerPort: {{$p}}
+              protocol: TCP
+            {{- end}}
+          {{- end}}
+          volumeMounts:
+            - name: data
+              mountPath: /home
+            - name: config
+              mountPath: /data

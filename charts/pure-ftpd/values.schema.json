@@ -1,4 +1,39 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "type": "object"
+  "type": "object",
+  "properties": {
+    "storage": {
+      "type": "object",
+      "properties": {
+        "diskGib": {
+          "type": "number",
+          "minimum": 1
+        },
+        "storageClass": { "type": "string" }
+      },
+      "required": ["diskGib", "storageClass"]
+    },
+    "connection": {
+      "type": "object",
+      "properties": {
+        "port": { "type": "integer" },
+        "passiveMode": {
+          "type": "object",
+          "properties": {
+            "minPort": {
+              "type": "integer",
+              "description": "Lowest port to open for passive connections"
+            },
+            "maxPort": {
+              "type": "integer",
+              "description": "Highest port to open for passive connections"
+            }
+          },
+          "required": ["minPort", "maxPort"]
+        }
+      },
+      "required": ["port", "passiveMode"]
+    }
+  },
+  "required": ["storage", "connection"]
 }
