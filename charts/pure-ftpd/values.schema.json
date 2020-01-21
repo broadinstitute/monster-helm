@@ -34,21 +34,15 @@
       },
       "required": ["port", "passiveMode"]
     },
-    "user": {
+    "userSecret": {
       "type": "object",
       "properties": {
-        "username": { "type": "string" },
-        "passwordSecret": {
-          "type": "object",
-          "properties": {
-            "secretName": { "type": "string" },
-            "secretKey": { "type": "string" }
-          },
-          "required": ["secretName", "secretKey"]
-        }
+        "secretName": { "type": "string" },
+        "usernameKey": { "type": "string" },
+        "passwordKey": { "type": "string" }
       },
-      "required": ["username", "passwordSecret"]
+      "required": ["secretName", "usernameKey", "passwordKey"]
     }
   },
-  "required": ["storage", "connection", "user"]
+  "required": ["storage", "connection", "userSecret"]
 }
