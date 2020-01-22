@@ -9,6 +9,6 @@ connection:
         minPort: 30000
         maxPort: 30009
 rbac:
-    enable: true
+    create: true
 serviceAccount:
     create: true

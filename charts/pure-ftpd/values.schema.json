@@ -46,9 +46,9 @@
     "rbac": {
       "type": "object",
       "properties": {
-        "enable": { "type": "boolean" }
+        "create": { "type": "boolean" }
       },
-      "required": ["enable"]
+      "required": ["create"]
     },
     "serviceAccount": {
       "type": "object",
