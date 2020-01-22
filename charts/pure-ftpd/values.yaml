@@ -1,8 +1,14 @@
 # ONLY UPDATE THIS FILE IF IT MAKES SENSE TO SET/CHANGE A DEFAULT VALUE.
 # If you're doing local testing, make a `local-values.yaml` file with
 # specific settings, and point Helm at it.
+storage:
+    storageClass: default
 connection:
     port: 21
     passiveMode:
         minPort: 30000
         maxPort: 30009
+rbac:
+    enable: true
+serviceAccount:
+    create: true
