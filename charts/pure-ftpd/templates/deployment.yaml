@@ -12,6 +12,7 @@ spec:
       labels:
         app: {{ .Release.Name }}
     spec:
+      serviceAccount: {{ include "pure-ftpd.serviceAccountName" . }}
       volumes:
         - name: data
           persistentVolumeClaim:
@@ -35,7 +36,7 @@ spec:
                   key: {{ .usernameKey }}
             {{- end}}
           command: ["sh", "-c"]
-          args: ["mkdir /data/${USERNAME} && chown -R 1003:1005 /data/${USERNAME}"]
+          args: ["mkdir -p /data/${USERNAME} && chown -R 1003:1005 /data/${USERNAME}"]
 
         # Register a virtual user, rooted in the data volume.
         - name: add-user

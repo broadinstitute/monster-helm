@@ -42,7 +42,22 @@
         "passwordKey": { "type": "string" }
       },
       "required": ["secretName", "usernameKey", "passwordKey"]
+    },
+    "rbac": {
+      "type": "object",
+      "properties": {
+        "enable": { "type": "boolean" }
+      },
+      "required": ["enable"]
+    },
+    "serviceAccount": {
+      "type": "object",
+      "properties": {
+        "create": { "type": "boolean" },
+        "name": { "type": "string" }
+      },
+      "required": ["create"]
     }
   },
-  "required": ["storage", "connection", "userSecret"]
+  "required": ["storage", "connection", "userSecret", "rbac", "serviceAccount"]
 }
