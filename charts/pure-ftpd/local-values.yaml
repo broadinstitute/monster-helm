@@ -1,0 +1,7 @@
+storage:
+  diskGib: 1
+  storageClass: local-path
+userSecret:
+  secretName: password-secret
+  usernameKey: user
+  passwordKey: password
