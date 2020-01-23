@@ -86,7 +86,7 @@ function index_charts () {
     ${index_command[@]}
 
   # Commit & push the updated index file.
-  git -C {REPO_ROOT} commit -am ${commit_message}
+  git -C ${REPO_ROOT} commit -am ${commit_message}
   git push origin gh-pages
 }
 
