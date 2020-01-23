@@ -16,7 +16,7 @@ function count_changed_files () {
 
 function check_chart_names () {
   for chart in ${@}; do
-    if ! stat -q ${REPO_ROOT}/charts/${chart}; then
+    if ! stat -q ${REPO_ROOT}/charts/${chart} > /dev/null; then
       1>&2 echo Error: Chart ${chart} does not exist
       exit 1
     fi
@@ -60,6 +60,8 @@ function index_charts () {
   local -r commit_message=$1
   local -ra index_command=(
     cr index
+    # Helm chart URL.
+    -c https://broadinstitute.github.io/monster-helm
     # GitHub organization.
     -o broadinstitute
     # GitHub repository.
