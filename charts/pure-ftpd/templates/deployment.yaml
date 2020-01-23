@@ -1,0 +1,100 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  labels:
+    {{- include "pure-ftpd.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "pure-ftpd.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "pure-ftpd.selectorLabels" . | nindent 8 }}
+        {{- include "pure-ftpd.labels" . | nindent 8 }}
+    spec:
+      serviceAccount: {{ include "pure-ftpd.serviceAccountName" . }}
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-data-storage
+        - name: config
+          emptyDir: {}
+      initContainers:
+        # Set up UID/GID on data storage before creating
+        # the corresponding user.
+        - name: set-permissions
+          image: alpine
+          volumeMounts:
+            - name: data
+              mountPath: /data
+          env:
+            {{- with .Values.userSecret }}
+            - name: USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .secretName }}
+                  key: {{ .usernameKey }}
+            {{- end}}
+          command: ["sh", "-c"]
+          args: ["mkdir -p /data/${USERNAME} && chown -R 1003:1005 /data/${USERNAME}"]
+
+        # Register a virtual user, rooted in the data volume.
+        - name: add-user
+          image: crazymax/pure-ftpd:1.0.49
+          volumeMounts:
+            - name: config
+              mountPath: /etc/pureftpd
+          env:
+            - name: PURE_PASSWDFILE
+              value: /etc/pureftpd/pureftpd.passwd
+            - name: PURE_DBFILE
+              value: /etc/pureftpd/pureftpd.pdb
+            {{- with .Values.userSecret }}
+            - name: USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .secretName }}
+                  key: {{ .usernameKey }}
+            - name: PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .secretName }}
+                  key: {{ .passwordKey }}
+            {{- end}}
+          command: ["sh", "-c"]
+          args:
+            - |-
+              echo -e "${PASSWORD}\n${PASSWORD}" | \
+              pure-pw useradd ${USERNAME} \
+                -u 1003 -g 1005 -d /home/${USERNAME} -m
+      containers:
+        - name: ftp-server
+          image: crazymax/pure-ftpd:1.0.49
+          volumeMounts:
+            - name: data
+              mountPath: /home
+            - name: config
+              mountPath: /data
+          env:
+            - name: K8S_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: PASSIVE_IP
+              value: {{ .Release.Name }}.$(K8S_NAMESPACE)
+            {{- with .Values.connection.passiveMode }}
+            - name: PASSIVE_PORT_RANGE
+              value: {{ .minPort }}:{{ .maxPort }}
+          ports:
+            - name: command-port
+              containerPort: 2100
+              protocol: TCP
+            {{- range $i, $p := (untilStep (int .minPort) (int (add .maxPort 1)) 1) }}
+            - name: passive-port-{{$i}}
+              containerPort: {{$p}}
+              protocol: TCP
+            {{- end}}
+          {{- end}}
