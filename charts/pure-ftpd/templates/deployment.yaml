@@ -2,15 +2,18 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Release.Name }}
+  labels:
+    {{- include "pure-ftpd.labels" . | nindent 4 }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {{ .Release.Name }}
+      {{- include "pure-ftpd.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        app: {{ .Release.Name }}
+        {{- include "pure-ftpd.selectorLabels" . | nindent 8 }}
+        {{- include "pure-ftpd.labels" . | nindent 8 }}
     spec:
       serviceAccount: {{ include "pure-ftpd.serviceAccountName" . }}
       volumes:

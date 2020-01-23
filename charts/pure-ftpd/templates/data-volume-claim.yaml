@@ -2,6 +2,8 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: {{ .Release.Name }}-data-storage
+  labels:
+    {{- include "pure-ftpd.labels" . | nindent 4 }}
 spec:
   accessModes:
     - ReadWriteOnce

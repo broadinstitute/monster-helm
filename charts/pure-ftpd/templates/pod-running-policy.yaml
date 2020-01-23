@@ -3,6 +3,8 @@ apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
   name: {{ .Release.Name }}-pod-running-policy
+  labels:
+    {{- include "pure-ftpd.labels" . | nindent 4 }}
 spec:
   privileged: false
   seLinux:
