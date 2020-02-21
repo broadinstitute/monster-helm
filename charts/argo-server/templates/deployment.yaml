@@ -27,7 +27,7 @@ spec:
           readinessProbe:
             httpGet:
               port: http
-              schema: HTTP
+              scheme: HTTP
               path: /
             initialDelaySeconds: 10
             periodSeconds: 20
