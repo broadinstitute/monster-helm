@@ -14,7 +14,7 @@ metadata:
   name: {{ .Release.Name }}-config
 data:
   config: |
-    containerRuntimeExecutor: pns
+    containerRuntimeExecutor: {{ .Values.executor }}
     persistence:
       nodeStatusOffLoad: true
       archive: true

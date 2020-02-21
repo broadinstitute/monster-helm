@@ -1,4 +1,5 @@
-rbac:
-  create: true
+executor: docker
 persistence:
   tableName: argo_workflow
+rbac:
+  create: true
