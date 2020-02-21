@@ -10,6 +10,16 @@ entries:
     urls:
     - https://github.com/broadinstitute/monster-helm/releases/download/argo-controller-0.1.0/argo-controller-0.1.0.tgz
     version: 0.1.0
+  argo-server:
+  - apiVersion: v2
+    appVersion: "2.5"
+    created: "2020-02-21T21:03:23.2998328Z"
+    description: Chart for the Argo workflow server
+    digest: c71b3033ab8f76d16687d6e27b668dce2757bc86e12601b1739a543e4e7d077d
+    name: argo-server
+    urls:
+    - https://github.com/broadinstitute/monster-helm/releases/download/argo-server-0.1.0/argo-server-0.1.0.tgz
+    version: 0.1.0
   pure-ftpd:
   - apiVersion: v2
     appVersion: 1.0.49
