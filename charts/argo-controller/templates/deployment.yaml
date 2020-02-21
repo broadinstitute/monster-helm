@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-controller
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ .Release.Name }}
+    spec:
+      serviceAccount: {{ .Release.Name }}-account
+      containers:
+        - name: workflow-controller
+          image: argoproj/workflow-controller:v2.5.1
+          command: [workflow-controller]
+          args:
+            - --configmap
+            - {{ .Release.Name }}-config
+            - --executor-image
+            - argoproj/argoexec:v2.5.0
+            - --namespaced
