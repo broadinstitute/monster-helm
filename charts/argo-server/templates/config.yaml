@@ -1,0 +1,32 @@
+---
+{{- $secretName := printf "%s-persistence-user" .Release.Name }}
+{{- $secretKey := "username" }}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ $secretName }}
+data:
+  {{ $secretKey }}: {{ .Values.persistence.username | b64enc | quote }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-config
+data:
+  config: |
+    persistence:
+      nodeStatusOffLoad: true
+      archive: true
+      postgresql:
+        host: {{ .Values.persistence.host }}
+        port: {{ .Values.persistence.port }}
+        database: {{ .Values.persistence.database }}
+        tableName: {{ .Values.persistence.tableName }}
+        userNameSecret:
+          name: {{ $secretName }}
+          key: {{ $secretKey }}
+        passwordSecret:
+          {{- with .Values.persistence.password }}
+          name: {{ .secretName }}
+          key: {{ .secretKey }}
+          {{- end }}

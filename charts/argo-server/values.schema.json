@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "persistence": {
+      "type": "object",
+      "properties": {
+        "host": { "type": "string" },
+        "port": { "type": "integer" },
+        "database": { "type": "string" },
+        "tableName": { "type": "string" },
+        "username": { "type": "string" },
+        "password": {
+          "type": "object",
+          "properties": {
+            "secretName": { "type": "string" },
+            "secretKey": { "type": "string" }
+          },
+          "required": ["secretName", "secretKey"]
+        }
+      },
+      "required": ["host", "port", "database", "tableName", "username", "password"]
+    },
+    "rbac": {
+      "type": "object",
+      "properties": {
+        "create": { "type": "boolean" }
+      },
+      "required": ["create"]
+    },
+    "service": {
+      "type": "object",
+      "properties": {
+        "port": { "type": "integer" }
+      }
+    }
+  },
+  "required": ["persistence", "rbac"]
+}
