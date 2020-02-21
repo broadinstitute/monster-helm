@@ -15,8 +15,8 @@ spec:
       containers:
         - name: argo-server
           image: argoproj/argocli:v2.5.1
-          command: [server]
           args:
+            - server
             - --configmap
             - {{ .Release.Name }}-config
             - --auth-mode
