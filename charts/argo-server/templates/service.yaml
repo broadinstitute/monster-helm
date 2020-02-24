@@ -31,6 +31,7 @@ metadata:
   annotations:
     kubernetes.io/ingress.global-static-ip-name: {{ .ipName | quote }}
     networking.gke.io/managed-certificates: {{ $crtName | quote }}
+    kubernetes.io/ingress.allow-http: "false"
 spec:
   rules:
     - http:
