@@ -13,6 +13,7 @@ spec:
   ports:
     - port: {{ $svcPort }}
       targetPort: http
+      name: http
 {{- if .create }}
 {{- $crtName := printf "%s-certificate" $svcName }}
 ---
