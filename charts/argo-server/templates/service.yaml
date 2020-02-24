@@ -13,7 +13,6 @@ spec:
   ports:
     - port: {{ $svcPort }}
       targetPort: http
-      name: http
 {{- if .create }}
 {{- $crtName := printf "%s-certificate" $svcName }}
 ---
@@ -40,6 +39,6 @@ spec:
           - path: /*
             backend:
               serviceName: {{ $svcName }}
-              servicePort: http
+              servicePort: {{ $svcPort }}
 {{- end }}
 {{- end }}
