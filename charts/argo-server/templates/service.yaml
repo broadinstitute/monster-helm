@@ -1,4 +1,5 @@
 {{- $svcName := .Release.Name }}
+{{- $svcPort := .Values.service.port }}
 ---
 apiVersion: v1
 kind: Service
@@ -7,12 +8,11 @@ metadata:
 spec:
   selector:
     app.kubernetes.io/name: {{ .Release.Name }}
-  type: {{ if .Values.service.ingress.create }}NodePort{{ else }}ClusterIP{{ end }}
-  ports:
-    - port: {{ .Values.service.port }}
-      targetPort: http
-      name: http
 {{- with .Values.service.ingress }}
+  type: {{ if .create }}NodePort{{ else }}ClusterIP{{ end }}
+  ports:
+    - port: {{ $svcPort }}
+      targetPort: http
 {{- if .create }}
 {{- $crtName := printf "%s-certificate" $svcName }}
 ---
