@@ -30,4 +30,11 @@ spec:
               scheme: HTTP
               path: /
             initialDelaySeconds: 10
-            periodSeconds: 20
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              port: http
+              scheme: HTTP
+              path: /
+            initialDelaySeconds: 30
+            periodSeconds: 10
