@@ -1,6 +1,25 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
+  "definitions": {
+    "ingressDisabled": {
+      "type": "object",
+      "properties": {
+        "create": { "const": false }
+      },
+      "required": ["create"],
+      "additionalProperties": false
+    },
+    "ingressEnabled": {
+      "type": "object",
+      "properties": {
+        "create": { "const": true },
+        "ipName": { "type": "string" },
+        "domainName": { "type": "string" }
+      },
+      "required": ["create", "ipName", "domainName"]
+    }
+  },
   "properties": {
     "persistence": {
       "type": "object",
@@ -31,8 +50,15 @@
     "service": {
       "type": "object",
       "properties": {
-        "port": { "type": "integer" }
-      }
+        "port": { "type": "integer" },
+        "ingress": {
+          "oneOf": [
+            { "$ref": "#/definitions/ingressDisabled" },
+            { "$ref": "#/definitions/ingressEnabled" }
+          ]
+        }
+      },
+      "required": ["port", "ingress"]
     }
   },
   "required": ["persistence", "rbac"]

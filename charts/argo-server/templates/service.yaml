@@ -1,10 +1,44 @@
+{{- $svcName := .Release.Name }}
+{{- $svcPort := .Values.service.port }}
+---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Release.Name }}
+  name: {{ $svcName }}
 spec:
   selector:
     app.kubernetes.io/name: {{ .Release.Name }}
+{{- with .Values.service.ingress }}
+  type: {{ if .create }}NodePort{{ else }}ClusterIP{{ end }}
   ports:
-    - port: {{ .Values.service.port }}
+    - port: {{ $svcPort }}
       targetPort: http
+{{- if .create }}
+{{- $crtName := printf "%s-certificate" $svcName }}
+---
+apiVersion: networking.gke.io/v1beta1
+kind: ManagedCertificate
+metadata:
+  name: {{ $crtName }}
+spec:
+  domains:
+    - {{ .domainName }}
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ $svcName }}-ingress
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: {{ .ipName | quote }}
+    networking.gke.io/managed-certificates: {{ $crtName | quote }}
+    kubernetes.io/ingress.allow-http: "false"
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /*
+            backend:
+              serviceName: {{ $svcName }}
+              servicePort: {{ $svcPort }}
+{{- end }}
+{{- end }}
