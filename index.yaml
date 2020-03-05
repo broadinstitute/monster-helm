@@ -47,6 +47,15 @@ entries:
     urls:
     - https://github.com/broadinstitute/monster-helm/releases/download/argo-server-0.1.0/argo-server-0.1.0.tgz
     version: 0.1.0
+  gcp-managed-cert:
+  - apiVersion: v2
+    created: "2020-03-05T18:02:22.585748608Z"
+    description: Chart for creating gcp managed certs
+    digest: bde06f62a49dc70015fbad58cbe5dae51e83a0da722fc96e063a4c81ab73c179
+    name: gcp-managed-cert
+    urls:
+    - https://github.com/broadinstitute/monster-helm/releases/download/gcp-managed-cert-0.1.0/gcp-managed-cert-0.1.0.tgz
+    version: 0.1.0
   pure-ftpd:
   - apiVersion: v2
     appVersion: 1.0.49
