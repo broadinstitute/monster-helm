@@ -5,4 +5,4 @@ metadata:
   name: {{ .Release.Name }}
 spec:
   domains:
-    - {{ Values.domainName }}
+    - {{ .Values.domainName }}
