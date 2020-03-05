@@ -14,7 +14,7 @@ spec:
       serviceAccount: {{ .Release.Name }}-account
       containers:
         - name: argo-server
-          image: argoproj/argocli:v2.6.0
+          image: argoproj/argocli:v2.6.1
           args:
             - server
             - --configmap
