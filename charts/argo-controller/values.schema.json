@@ -31,7 +31,8 @@
         "create": { "type": "boolean" }
       },
       "required": ["create"]
-    }
+    },
+    "debug": { "type": "boolean" }
   },
-  "required": ["persistence", "rbac"]
+  "required": ["executor", "persistence", "rbac", "debug"]
 }

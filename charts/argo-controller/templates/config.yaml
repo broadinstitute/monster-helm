@@ -15,6 +15,10 @@ metadata:
 data:
   config: |
     containerRuntimeExecutor: {{ .Values.executor }}
+    {{- if .Values.debug }}
+    executor:
+      args: ['--loglevel', 'debug']
+    {{- end }}
     persistence:
       nodeStatusOffLoad: true
       archive: true
