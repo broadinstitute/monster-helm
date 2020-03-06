@@ -6,3 +6,4 @@ service:
   port: 80
   ingress:
     create: false
+debug: false

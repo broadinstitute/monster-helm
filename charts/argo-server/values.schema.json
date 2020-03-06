@@ -59,7 +59,8 @@
         }
       },
       "required": ["port", "ingress"]
-    }
+    },
+    "debug": { "type": "boolean" }
   },
-  "required": ["persistence", "rbac"]
+  "required": ["persistence", "rbac", "service", "debug"]
 }

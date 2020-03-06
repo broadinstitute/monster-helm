@@ -22,3 +22,7 @@ spec:
             - --executor-image
             - argoproj/argoexec:v2.6.1
             - --namespaced
+            {{- if .Values.debug }}
+            - --loglevel
+            - debug
+            {{- end }}

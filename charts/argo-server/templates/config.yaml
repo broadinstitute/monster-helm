@@ -15,8 +15,6 @@ metadata:
 data:
   config: |
     persistence:
-      nodeStatusOffLoad: true
-      archive: true
       postgresql:
         host: {{ .Values.persistence.host }}
         port: {{ .Values.persistence.port }}

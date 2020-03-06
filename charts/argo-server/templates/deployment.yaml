@@ -21,6 +21,10 @@ spec:
             - {{ .Release.Name }}-config
             - --auth-mode
             - client
+            {{- if .Values.debug }}
+            - --loglevel
+            - debug
+            {{- end }}
           ports:
             - containerPort: 2746
               name: http
