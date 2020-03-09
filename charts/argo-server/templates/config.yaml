@@ -15,16 +15,19 @@ metadata:
 data:
   config: |
     persistence:
+      {{- with .Values.persistence }}
+      clusterName: {{ .clusterId }}
       postgresql:
-        host: {{ .Values.persistence.host }}
-        port: {{ .Values.persistence.port }}
-        database: {{ .Values.persistence.database }}
-        tableName: {{ .Values.persistence.tableName }}
+        host: {{ .host }}
+        port: {{ .port }}
+        database: {{ .database }}
+        tableName: argo_workflows
         userNameSecret:
           name: {{ $secretName }}
           key: {{ $secretKey }}
+        {{- with .password }}
         passwordSecret:
-          {{- with .Values.persistence.password }}
           name: {{ .secretName }}
           key: {{ .secretKey }}
-          {{- end }}
+        {{- end }}
+      {{- end }}

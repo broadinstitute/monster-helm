@@ -1,5 +1,3 @@
-persistence:
-  tableName: argo_workflow
 rbac:
   create: true
 service:
