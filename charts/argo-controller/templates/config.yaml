@@ -23,7 +23,7 @@ data:
       nodeStatusOffLoad: true
       archive: true
       {{- with .Values.persistence }}
-      clusterName {{ .clusterId }}
+      clusterName: {{ .clusterId }}
       postgresql:
         host: {{ .host }}
         port: {{ .port }}
