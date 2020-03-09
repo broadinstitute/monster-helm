@@ -12,7 +12,6 @@
         "host": { "type": "string" },
         "port": { "type": "integer" },
         "database": { "type": "string" },
-        "tableName": { "type": "string" },
         "username": { "type": "string" },
         "password": {
           "type": "object",
@@ -21,9 +20,10 @@
             "secretKey": { "type": "string" }
           },
           "required": ["secretName", "secretKey"]
-        }
+        },
+        "clusterId": { "type": "string" }
       },
-      "required": ["host", "port", "database", "tableName", "username", "password"]
+      "required": ["host", "port", "database", "username", "password", "clusterId"]
     },
     "rbac": {
       "type": "object",

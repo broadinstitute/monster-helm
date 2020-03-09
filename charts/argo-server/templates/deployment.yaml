@@ -25,6 +25,11 @@ spec:
             - --loglevel
             - debug
             {{- end }}
+          {{- if .Values.debug }}
+          env:
+            - name: UPPERIO_DB_DEBUG
+              value: "1"
+          {{- end }}
           ports:
             - containerPort: 2746
               name: http

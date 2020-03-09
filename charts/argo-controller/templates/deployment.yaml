@@ -26,3 +26,8 @@ spec:
             - --loglevel
             - debug
             {{- end }}
+          {{- if .Values.debug }}
+          env:
+            - name: UPPERIO_DB_DEBUG
+              value: "1"
+          {{- end }}
