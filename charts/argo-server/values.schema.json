@@ -38,7 +38,7 @@
         },
         "clusterId": { "type": "string" }
       },
-      "required": ["host", "port", "database", "username", "password", "clusterId"]
+      "required": ["host", "port", "database", "username", "password"]
     },
     "rbac": {
       "type": "object",
@@ -60,7 +60,10 @@
       },
       "required": ["port", "ingress"]
     },
-    "debug": { "type": "boolean" }
+    "debug": { "type": "boolean" },
+    "stackdriverProject": { "type": "string" },
+    "clusterName": { "type": "string" }
   },
-  "required": ["persistence", "rbac", "service", "debug"]
+  "required": ["persistence", "rbac", "service", "debug",
+               "stackdriverProject", "clusterName"]
 }

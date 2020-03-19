@@ -22,8 +22,8 @@ data:
     persistence:
       nodeStatusOffLoad: true
       archive: true
+      clusterName: {{ .Values.clusterName }}
       {{- with .Values.persistence }}
-      clusterName: {{ .clusterId }}
       postgresql:
         host: {{ .host }}
         port: {{ .port }}
@@ -38,3 +38,6 @@ data:
           key: {{ .secretKey }}
         {{- end }}
       {{- end }}
+    workflowDefaults:
+      podGC:
+        strategy: OnWorkflowSuccess

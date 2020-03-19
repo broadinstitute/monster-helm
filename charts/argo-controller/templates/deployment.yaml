@@ -14,13 +14,13 @@ spec:
       serviceAccount: {{ .Release.Name }}-account
       containers:
         - name: workflow-controller
-          image: argoproj/workflow-controller:v2.6.1
+          image: argoproj/workflow-controller:v2.7.0-rc1
           command: [workflow-controller]
           args:
             - --configmap
             - {{ .Release.Name }}-config
             - --executor-image
-            - argoproj/argoexec:v2.6.1
+            - argoproj/argoexec:v2.7.0-rc1
             - --namespaced
             {{- if .Values.debug }}
             - --loglevel
