@@ -2,6 +2,15 @@ apiVersion: v1
 entries:
   argo-controller:
   - apiVersion: v2
+    appVersion: "2.7"
+    created: "2020-03-20T15:49:49.6337398Z"
+    description: Chart for the Argo workflow controller
+    digest: e53228ca9a8312905c4c54d0eafee18adc3cbb7e6c20a81f9586b17fcf1d8608
+    name: argo-controller
+    urls:
+    - https://github.com/broadinstitute/monster-helm/releases/download/argo-controller-0.4.0/argo-controller-0.4.0.tgz
+    version: 0.4.0
+  - apiVersion: v2
     appVersion: "2.6"
     created: "2020-03-09T17:47:27.8265584Z"
     description: Chart for the Argo workflow controller
@@ -47,6 +56,15 @@ entries:
     - https://github.com/broadinstitute/monster-helm/releases/download/argo-controller-0.1.0/argo-controller-0.1.0.tgz
     version: 0.1.0
   argo-server:
+  - apiVersion: v2
+    appVersion: "2.7"
+    created: "2020-03-20T15:49:49.7645774Z"
+    description: Chart for the Argo workflow server
+    digest: 9f7e5c10b4e93105e4552ffe089286b328742fd07e9db315f3aa04cff347da37
+    name: argo-server
+    urls:
+    - https://github.com/broadinstitute/monster-helm/releases/download/argo-server-0.5.0/argo-server-0.5.0.tgz
+    version: 0.5.0
   - apiVersion: v2
     appVersion: "2.6"
     created: "2020-03-09T17:47:28.2236146Z"
