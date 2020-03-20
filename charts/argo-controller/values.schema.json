@@ -20,10 +20,9 @@
             "secretKey": { "type": "string" }
           },
           "required": ["secretName", "secretKey"]
-        },
-        "clusterId": { "type": "string" }
+        }
       },
-      "required": ["host", "port", "database", "username", "password", "clusterId"]
+      "required": ["host", "port", "database", "username", "password"]
     },
     "rbac": {
       "type": "object",
@@ -32,7 +31,8 @@
       },
       "required": ["create"]
     },
-    "debug": { "type": "boolean" }
+    "debug": { "type": "boolean" },
+    "clusterName": { "type": "string" }
   },
-  "required": ["executor", "persistence", "rbac", "debug"]
+  "required": ["executor", "persistence", "rbac", "debug", "clusterName"]
 }
