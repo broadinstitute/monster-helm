@@ -1,6 +1,13 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
+  "definitions": {
+    "disabled": {
+      "type": "object",
+      "properties": { "enabled": { "const": false } },
+      "additionalProperties": false
+    }
+  },
   "properties": {
     "executor": {
       "type": "string",
@@ -32,7 +39,47 @@
       "required": ["create"]
     },
     "debug": { "type": "boolean" },
-    "clusterName": { "type": "string" }
+    "clusterName": { "type": "string" },
+    "workflowDefaults": {
+      "type": "object",
+      "properties": {
+        "podGarbageCollection": {
+          "oneOf": [
+            { "$ref": "#/definitions/disabled" },
+            {
+              "type": "object",
+              "properties": {
+                "enabled": { "const": true },
+                "strategy": {
+                  "enum": [
+                    "OnPodCompletion",
+                    "OnPodSuccess",
+                    "OnWorkflowCompletion",
+                    "OnWorkflowSuccess"
+                  ]
+                }
+              },
+              "required": ["enabled", "strategy"]
+            }
+          ]
+        },
+        "workflowTTL": {
+          "oneOf": [
+            { "$ref": "#/definitions/disabled" },
+            {
+              "type": "object",
+              "properties": {
+                "enabled": { "const": true },
+                "secondsAfterSuccess": { "type": "integer" },
+                "secondsAfterFailure": { "type": "integer" }
+              },
+              "required": ["enabled", "secondsAfterSuccess", "secondsAfterFailure"]
+            }
+          ]
+        }
+      },
+      "required": ["podGarbageCollection", "workflowTTL"]
+    }
   },
-  "required": ["executor", "persistence", "rbac", "debug", "clusterName"]
+  "required": ["executor", "persistence", "rbac", "debug", "clusterName", "workflowDefaults"]
 }

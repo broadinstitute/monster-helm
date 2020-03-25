@@ -38,6 +38,17 @@ data:
           key: {{ .secretKey }}
         {{- end }}
       {{- end }}
+    {{- with .Values.workflowDefaults }}
+    {{- if or .podGarbageCollection.enabled .workflowTTL.enabled }}
     workflowDefaults:
+      {{- if .podGarbageCollection.enabled }}
       podGC:
-        strategy: OnWorkflowSuccess
+        strategy: {{ .podGarbageCollection.strategy }}
+      {{- end }}
+      {{- if .workflowTTL.enabled }}
+      ttlStrategy:
+        secondsAfterSuccess: {{ .workflowTTL.secondsAfterSuccess }}
+        secondsAfterFailure: {{ .workflowTTL.secondsAfterFailure }}
+      {{- end }}
+    {{- end }}
+    {{- end }}
