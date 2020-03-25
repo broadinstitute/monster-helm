@@ -13,31 +13,41 @@ kind: ConfigMap
 metadata:
   name: {{ .Release.Name }}-config
 data:
-  config: |
-    containerRuntimeExecutor: {{ .Values.executor }}
-    {{- if .Values.debug }}
-    executor:
-      args: ['--loglevel', 'debug']
-    {{- end }}
-    persistence:
-      nodeStatusOffLoad: true
-      archive: true
-      clusterName: {{ .Values.clusterName }}
-      {{- with .Values.persistence }}
-      postgresql:
-        host: {{ .host }}
-        port: {{ .port }}
-        database: {{ .database }}
-        tableName: argo_workflows
-        userNameSecret:
-          name: {{ $secretName }}
-          key: {{ $secretKey }}
-        {{- with .password }}
-        passwordSecret:
-          name: {{ .secretName }}
-          key: {{ .secretKey }}
-        {{- end }}
+  containerRuntimeExecutor: {{ .Values.executor }}
+  {{- if .Values.debug }}
+  executor: |
+    args: ['--loglevel', 'debug']
+  {{- end }}
+  persistence: |
+    nodeStatusOffLoad: true
+    archive: true
+    clusterName: {{ .Values.clusterName }}
+    {{- with .Values.persistence }}
+    postgresql:
+      host: {{ .host }}
+      port: {{ .port }}
+      database: {{ .database }}
+      tableName: argo_workflows
+      userNameSecret:
+        name: {{ $secretName }}
+        key: {{ $secretKey }}
+      {{- with .password }}
+      passwordSecret:
+        name: {{ .secretName }}
+        key: {{ .secretKey }}
       {{- end }}
-    workflowDefaults:
-      podGC:
-        strategy: OnWorkflowSuccess
+    {{- end }}
+  {{- with .Values.workflowDefaults }}
+  {{- if or .podGarbageCollection.enabled .workflowTTL.enabled }}
+  workflowDefaults: |
+    {{- if .podGarbageCollection.enabled }}
+    podGC:
+      strategy: {{ .podGarbageCollection.strategy }}
+    {{- end }}
+    {{- if .workflowTTL.enabled }}
+    ttlStrategy:
+      secondsAfterSuccess: {{ .workflowTTL.secondsAfterSuccess }}
+      secondsAfterFailure: {{ .workflowTTL.secondsAfterFailure }}
+    {{- end }}
+  {{- end }}
+  {{- end }}

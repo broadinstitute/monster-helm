@@ -2,3 +2,8 @@ executor: docker
 rbac:
   create: true
 debug: false
+workflowDefaults:
+  podGarbageCollection:
+    enabled: false
+  workflowTTL:
+    enabled: false
