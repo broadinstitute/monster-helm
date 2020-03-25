@@ -13,27 +13,26 @@ kind: ConfigMap
 metadata:
   name: {{ .Release.Name }}-config
 data:
-  config: |
-    {{- $clusterName := .Values.clusterName }}
-    persistence:
-      {{- with .Values.persistence }}
-      clusterName: {{ $clusterName }}
-      postgresql:
-        host: {{ .host }}
-        port: {{ .port }}
-        database: {{ .database }}
-        tableName: argo_workflows
-        userNameSecret:
-          name: {{ $secretName }}
-          key: {{ $secretKey }}
-        {{- with .password }}
-        passwordSecret:
-          name: {{ .secretName }}
-          key: {{ .secretKey }}
-        {{- end }}
+  {{- $clusterName := .Values.clusterName }}
+  persistence: |
+    {{- with .Values.persistence }}
+    clusterName: {{ $clusterName }}
+    postgresql:
+      host: {{ .host }}
+      port: {{ .port }}
+      database: {{ .database }}
+      tableName: argo_workflows
+      userNameSecret:
+        name: {{ $secretName }}
+        key: {{ $secretKey }}
+      {{- with .password }}
+      passwordSecret:
+        name: {{ .secretName }}
+        key: {{ .secretKey }}
       {{- end }}
-    links:
-      - name: Stackdriver Logs
-        scope: pod
-        {{- $project := .Values.stackdriverProject }}
-        url: https://console.cloud.google.com/logs/viewer?project={{ $project }}&advancedFilter=resource.type%3D"k8s_container"%0Aresource.labels.project_id%3D"{{ $project }}"%0Aresource.labels.cluster_name%3D"{{ $clusterName }}"%0Aresource.labels.namespace_name%3D"${metadata.namespace}"%0Aresource.labels.pod_name%3D"${metadata.name}"
+    {{- end }}
+  links: |
+    - name: Stackdriver Logs
+      scope: pod
+      {{- $project := .Values.stackdriverProject }}
+      url: https://console.cloud.google.com/logs/viewer?project={{ $project }}&advancedFilter=resource.type%3D"k8s_container"%0Aresource.labels.project_id%3D"{{ $project }}"%0Aresource.labels.cluster_name%3D"{{ $clusterName }}"%0Aresource.labels.namespace_name%3D"${metadata.namespace}"%0Aresource.labels.pod_name%3D"${metadata.name}"
