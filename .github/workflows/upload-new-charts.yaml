@@ -14,6 +14,10 @@ jobs:
       - uses: broadinstitute/setup-chart-releaser@v1
         with:
           version: '1.0.0-beta.1'
+      # Needed to actually find the last released tag.
+      # https://github.com/helm/chart-releaser-action/issues/13
+      - name: Fetch full git history
+        run: git fetch --prune --unshallow
       - run: ./hack/upload-changed-charts
         env:
           CR_TOKEN: ${{ secrets.ChartReleaserToken }}
