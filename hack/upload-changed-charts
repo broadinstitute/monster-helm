@@ -8,9 +8,7 @@ declare -r TEMP_DIR=${REPO_ROOT}/deploy
 function lookup_latest_tag () {
   git fetch --tags &> /dev/null
 
-  if ! git describe --tags --abbrev=0 2> /dev/null; then
-    git rev-list --max-parents=0 --first-parent HEAD
-  fi
+  git describe --tags --abbrev=0 2> /dev/null || git rev-list --max-parents=0 --first-parent HEAD
 }
 
 function lookup_changed_charts () {
