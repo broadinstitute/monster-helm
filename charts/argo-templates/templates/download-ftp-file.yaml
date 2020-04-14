@@ -1,0 +1,49 @@
+{{- with .Values.downloadFTPFile }}
+{{- if .create }}
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: {{ .name }}
+spec:
+  templates:
+    - name: main
+      inputs:
+        parameters:
+          - name: ftp-site
+          - name: ftp-path
+          - name: local-path
+          - name: pvc-name
+          - name: memory
+          - name: cpu
+      volumes:
+        - name: state
+          persistentVolumeClaim:
+            claimName: '{{ "{{inputs.parameters.pvc-name}}" }}'
+      {{- include "argo.retry" . | indent 6 }}
+      container:
+        image: cirrusci/wget
+        command: [wget]
+        args:
+          # Restart from any state
+          - --continue
+          # Reset the download connection if it goes idle for > 30 seconds.
+          - --read-timeout=30
+          - --output-document=/state/{{ "{{inputs.parameters.local-path}}" }}
+          - ftp://{{ "{{inputs.parameters.ftp-site}}" }}/{{ "{{inputs.parameters.ftp-path}}" }}
+        volumeMounts:
+          - name: state
+            mountPath: /state
+        {{- $mem := "{{inputs.parameters.memory}}" }}
+        {{- $cpu := "{{inputs.parameters.cpu}}" }}
+        podSpecPatch: |
+          containers:
+            - name: main
+              resources:
+                requests:
+                  memory: {{ $mem }}
+                  cpu: {{ $cpu }}
+                limits:
+                  memory: {{ $mem }}
+                  cpu: {{ $cpu }}
+{{- end }}
+{{- end }}

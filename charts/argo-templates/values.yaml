@@ -1,0 +1,6 @@
+generatePVC:
+  create: false
+downloadFTPFile:
+  create: false
+gsutilRsync:
+  create: false
