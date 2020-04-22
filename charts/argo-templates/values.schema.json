@@ -25,7 +25,24 @@
         "name": { "type": "string" }
       },
       "required": ["create"]
+    },
+    "createBQDataset": {
+      "type": "object",
+      "properties": {
+        "create": { "type": "boolean" },
+        "name": { "type": "string" }
+      },
+      "required": ["create"]
+    },
+    "diffBQTable": {
+      "type": "object",
+      "properties": {
+        "create": { "type": "boolean" },
+        "name": { "type": "string" },
+        "schemaImageName": { "type": "string" }
+      },
+      "required": ["create"]
     }
   },
-  "required": ["generatePVC", "downloadFTPFile", "gsutilRsync"]
+  "required": ["generatePVC", "downloadFTPFile", "gsutilRsync", "createBQDataset", "diffBQTable"]
 }
