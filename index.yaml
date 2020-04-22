@@ -195,6 +195,15 @@ entries:
     version: 0.1.0
   argo-templates:
   - apiVersion: v2
+    created: "2020-04-22T16:54:56.31635828Z"
+    description: Collection of generic Argo templates
+    digest: 88eb4189ed915d7a96db983cbcb89ce5100a58ce181e3992106fc232ee243d12
+    name: argo-templates
+    type: application
+    urls:
+    - https://github.com/broadinstitute/monster-helm/releases/download/argo-templates-0.0.2/argo-templates-0.0.2.tgz
+    version: 0.0.2
+  - apiVersion: v2
     created: "2020-04-14T21:20:09.613136388Z"
     description: Collection of generic Argo templates
     digest: 0495ac4651ce452746bf8072829be5f46d1061925d7afb04fd3db5285f7beb29
