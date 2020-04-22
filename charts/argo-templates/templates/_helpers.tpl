@@ -25,3 +25,10 @@ retryStrategy:
     factor: 2
     maxDuration: 5m
 {{- end -}}
+
+{{/* Render an array of strings line-by-line. Boilerplate for injecting script contents. */}}
+{{- define "argo.render-lines" }}
+{{- range . }}
+{{ . }}
+{{- end }}
+{{- end }}

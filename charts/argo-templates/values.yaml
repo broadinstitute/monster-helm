@@ -4,3 +4,7 @@ downloadFTPFile:
   create: false
 gsutilRsync:
   create: false
+createBQDataset:
+  create: false
+diffBQTable:
+  create: false
