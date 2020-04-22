@@ -166,9 +166,7 @@ spec:
             value: '{{ "gs://{{inputs.parameters.gcs-bucket}}/{{inputs.parameters.input-prefix}}" }}'
         command: [bash]
         source: |
-          {{- range .Files.Lines "scripts/diff-bq-table.sh" }}
-          {{ . }}
-          {{- end }}
+        {{- include "argo.render-lines" (.Files.Lines "scripts/diff-bq-table.sh") | indent 10 }}
 
     - name: query-ids-to-delete
       inputs:
@@ -191,9 +189,7 @@ spec:
             value: '{{ "{{inputs.parameters.table-name}}" }}'
         command: [bash]
         source: |
-          {{- range .Files.Lines "scripts/query-non-null-row-ids.sh" }}
-          {{ . }}
-          {{- end }}
+        {{- include "argo.render-lines" (.Files.Lines "scripts/query-non-null-row-ids.sh") | indent 10 }}
 
     - name: query-rows-to-append
       inputs:
@@ -216,9 +212,7 @@ spec:
             value: '{{ "{{inputs.parameters.table-name}}" }}'
         command: [bash]
         source: |
-          {{- range .Files.Lines "scripts/query-non-null-rows.sh" }}
-          {{ . }}
-          {{- end }}
+        {{- include "argo.render-lines" (.Files.Lines "scripts/query-non-null-rows.sh") | indent 10 }}
 
     - name: get-bq-table-size
       inputs:
@@ -238,9 +232,7 @@ spec:
             value: '{{ "{{inputs.parameters.bq-table}}" }}'
         command: [bash]
         source: |
-          {{- range .Files.Lines "scripts/get-bq-table-size.sh" }}
-          {{ . }}
-          {{- end }}
+        {{- include "argo.render-lines" (.Files.Lines "scripts/get-bq-table-size.sh") | indent 10 }}
 
     - name: extract-bq-table
       inputs:
@@ -269,7 +261,5 @@ spec:
             value: '{{ "{{inputs.parameters.gcs-prefix}}" }}'
         command: [bash]
         source: |
-          {{- range .Files.Lines "scripts/extract-bq-table.sh" }}
-          {{ . }}
-          {{- end }}
+        {{- include "argo.render-lines" (.Files.Lines "scripts/extract-bq-table.sh") | indent 10 }}
 {{- end }}
