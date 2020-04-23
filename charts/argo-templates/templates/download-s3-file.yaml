@@ -1,0 +1,47 @@
+{{- with .Values.downloadS3File }}
+{{- if .create }}
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: {{ .name }}
+spec:
+  templates:
+    - name: main
+      inputs:
+        parameters:
+          - name: s3-bucket
+          - name: s3-path
+          - name: local-path
+          - name: pvc-name
+          - name: memory
+          - name: cpu
+      volumes:
+        - name: state
+          persistentVolumeClaim:
+            claimName: '{{ "{{inputs.parameters.pvc-name}}" }}'
+      {{- include "argo.retry" . | indent 6 }}
+      container:
+        image: us.gcr.io/broad-dsp-gcr-public/s3cmd:1.0.0
+        command: [s3cmd, sync]
+        args:
+          - s3://{{inputs.parameters.s3-bucket}}/{{inputs.parameters.s3-path}}
+          # NOTE that having slashes at the end of these is apparently consequential for a directory or file download
+          # Look at item number 9 in the README here: https://github.com/s3tools/s3cmd/blob/master/README.md
+          - /state/{{inputs.parameters.local-path}}/
+        volumeMounts:
+          - name: state
+            mountPath: /state
+        {{- $mem := "{{inputs.parameters.memory}}" }}
+        {{- $cpu := "{{inputs.parameters.cpu}}" }}
+        podSpecPatch: |
+          containers:
+            - name: main
+              resources:
+                requests:
+                  memory: {{ $mem }}
+                  cpu: {{ $cpu }}
+                limits:
+                  memory: {{ $mem }}
+                  cpu: {{ $cpu }}
+{{- end }}
+{{- end }}

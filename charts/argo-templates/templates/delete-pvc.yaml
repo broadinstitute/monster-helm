@@ -1,0 +1,21 @@
+{{- with .Values.deletePVC }}
+{{- if .create }}
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: {{ .name }}
+spec:
+  templates:
+    - name: main
+      inputs:
+        parameters:
+          - name: pvc-name
+      resource:
+        action: delete
+        manifest: |
+          apiVersion: v1
+          kind: PersistentVolumeClaim
+          metadata:
+            name: {{ "{{inputs.parameters.pvc-name}}" }}-
+{{- end }}
+{{- end }}

@@ -1,6 +1,10 @@
 generatePVC:
   create: false
+deletePVC:
+  create: false
 downloadFTPFile:
+  create: false
+downloadS3File:
   create: false
 gsutilRsync:
   create: false
