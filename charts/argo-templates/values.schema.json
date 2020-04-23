@@ -34,6 +34,14 @@
       },
       "required": ["create"]
     },
+    "copyToGCS": {
+      "type": "object",
+      "properties": {
+        "create": { "type": "boolean" },
+        "name": { "type": "string" }
+      },
+      "required": ["create"]
+    },
     "gsutilRsync": {
       "type": "object",
       "properties": {
@@ -61,6 +69,7 @@
     }
   },
   "required": ["generatePVC", "deletePVC",
-               "downloadFTPFile", "downloadS3File", "gsutilRsync",
+               "downloadFTPFile", "downloadS3File",
+               "copyToGCS", "gsutilRsync",
                "createBQDataset", "diffBQTable"]
 }

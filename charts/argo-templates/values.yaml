@@ -6,6 +6,8 @@ downloadFTPFile:
   create: false
 downloadS3File:
   create: false
+copyToGCS:
+  create: false
 gsutilRsync:
   create: false
 createBQDataset:
