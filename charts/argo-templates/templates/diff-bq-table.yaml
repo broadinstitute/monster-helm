@@ -139,16 +139,7 @@ spec:
               parameter: '{{ "{{tasks.query-row-count.outputs.result}}" }}'
       metrics:
         prometheus:
-          - name: success-counter
-            help: 'Number of successful runs'
-            when: '{{status}} == Succeeded'
-            counter: 
-              value: '1'
-          - name: failure-counter
-            help: 'Number of failed runs'
-            when: '{{status}} == Failed'
-            counter: 
-              value: '1'
+          {{- include "argo.collect-execution-metrics" . | indent 10 }}
           - name: rows-to-delete-gauge
             help: 'Number of rows to be deleted'
             when: '{{status}} == Succeeded'

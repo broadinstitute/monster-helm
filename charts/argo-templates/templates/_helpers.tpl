@@ -32,3 +32,19 @@ retryStrategy:
 {{ . }}
 {{- end }}
 {{- end }}
+
+{{/* Collect metrics about execution results, including success/failure counts. */}}
+{{- define "argo.collect-execution-metrics" }}
+- name: result-counter
+  help: "Count step executions by result status"
+  labels:
+    - key: status
+      value: "{{status}}"
+  counter: 
+    value: "1"
+- name: realtime-duration-gauge
+  help: "Realtime measure of step duration"
+  gauge: 
+    realtime: true
+    value: value: "{{duration}}"
+{{- end -}}
