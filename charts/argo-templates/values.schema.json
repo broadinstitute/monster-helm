@@ -10,7 +10,31 @@
       },
       "required": ["create"]
     },
+    "deletePVC": {
+      "type": "object",
+      "properties": {
+        "create": { "type": "boolean" },
+        "name": { "type": "string" }
+      },
+      "required": ["create"]
+    },
     "downloadFTPFile": {
+      "type": "object",
+      "properties": {
+        "create": { "type": "boolean" },
+        "name": { "type": "string" }
+      },
+      "required": ["create"]
+    },
+    "downloadS3File": {
+      "type": "object",
+      "properties": {
+        "create": { "type": "boolean" },
+        "name": { "type": "string" }
+      },
+      "required": ["create"]
+    },
+    "copyToGCS": {
       "type": "object",
       "properties": {
         "create": { "type": "boolean" },
@@ -44,5 +68,8 @@
       "required": ["create"]
     }
   },
-  "required": ["generatePVC", "downloadFTPFile", "gsutilRsync", "createBQDataset", "diffBQTable"]
+  "required": ["generatePVC", "deletePVC",
+               "downloadFTPFile", "downloadS3File",
+               "copyToGCS", "gsutilRsync",
+               "createBQDataset", "diffBQTable"]
 }
