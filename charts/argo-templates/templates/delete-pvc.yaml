@@ -16,6 +16,6 @@ spec:
           apiVersion: v1
           kind: PersistentVolumeClaim
           metadata:
-            name: {{ "{{inputs.parameters.pvc-name}}" }}-
+            name: {{ "{{inputs.parameters.pvc-name}}" }}
 {{- end }}
 {{- end }}

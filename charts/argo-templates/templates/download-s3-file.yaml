@@ -24,10 +24,8 @@ spec:
         image: us.gcr.io/broad-dsp-gcr-public/s3cmd:1.0.0
         command: [s3cmd, sync]
         args:
-          - s3://{{inputs.parameters.s3-bucket}}/{{inputs.parameters.s3-path}}
-          # NOTE that having slashes at the end of these is apparently consequential for a directory or file download
-          # Look at item number 9 in the README here: https://github.com/s3tools/s3cmd/blob/master/README.md
-          - /state/{{inputs.parameters.local-path}}/
+          - {{ "s3://{{inputs.parameters.s3-bucket}}/{{inputs.parameters.s3-path}}" }}
+          - {{ "/state/{{inputs.parameters.local-path}}" }}
         volumeMounts:
           - name: state
             mountPath: /state
