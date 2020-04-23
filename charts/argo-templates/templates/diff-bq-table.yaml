@@ -144,6 +144,11 @@ spec:
             when: '{{status}} == Succeeded'
             counter: 
               value: '1'
+          - name: failure-counter
+            help: 'Number of failed runs'
+            when: '{{status}} == Failed'
+            counter: 
+              value: '1'
           - name: rows-to-delete-gauge
             help: 'Number of rows to be deleted'
             when: '{{status}} == Succeeded'
