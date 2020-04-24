@@ -17,9 +17,6 @@ spec:
           - name: memory
           - name: cpu
       volumes:
-        - name: credentials
-          secret:
-            secretName: '{{ "{{inputs.parameters.s3-access-secret}}" }}'
         - name: state
           persistentVolumeClaim:
             claimName: '{{ "{{inputs.parameters.pvc-name}}" }}'
@@ -28,7 +25,7 @@ spec:
         image: us.gcr.io/broad-dsp-gcr-public/s3cmd:1.0.0
         envFrom:
           - secretRef:
-              name: credentials
+              name: '{{ "{{inputs.parameters.s3-access-secret}}" }}'
         command: [s3cmd, get]
         args:
           - --continue
