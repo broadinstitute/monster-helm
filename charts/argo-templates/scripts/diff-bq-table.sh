@@ -15,7 +15,7 @@ for c in ${COMPARE_COLS//,/ }; do
 done
 declare -r FULL_DIFF=$(join_by ' OR ' "${COMPARISONS[@]}")
 
-declare -a PRIMARYCOLUMNS=()
+declare -a PRIMARY_COLUMNS=()
 for col in ${PK_COLS//,/ }; do
   PRIMARYCOLUMNS+=("${col} as datarepo_${col}")
 done
