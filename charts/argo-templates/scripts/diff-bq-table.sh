@@ -19,7 +19,7 @@ declare -a PRIMARY_COLUMNS=()
 for col in ${PK_COLS//,/ }; do
   PRIMARYCOLUMNS+=("${col} as datarepo_${col}")
 done
-declare -r SELECTCOLUMNS=$(join_by ', ' "${PRIMARYCOLUMNS[@]}")
+declare -r SELECT_COLUMNS=$(join_by ', ' "${PRIMARYCOLUMNS[@]}")
 
 declare -r TARGET_TABLE=${TABLE}_joined
 
