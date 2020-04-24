@@ -17,9 +17,9 @@ declare -r FULL_DIFF=$(join_by ' OR ' "${COMPARISONS[@]}")
 
 declare -a PRIMARY_COLUMNS=()
 for col in ${PK_COLS//,/ }; do
-  PRIMARYCOLUMNS+=("${col} as datarepo_${col}")
+  PRIMARY_COLUMNS+=("${col} as datarepo_${col}")
 done
-declare -r SELECT_COLUMNS=$(join_by ', ' "${PRIMARYCOLUMNS[@]}")
+declare -r REPO_KEYS=$(join_by ', ' "${PRIMARY_COLUMNS[@]}")
 
 declare -r TARGET_TABLE=${TABLE}_joined
 
@@ -38,7 +38,7 @@ declare -ra BQ_QUERY=(
   --external_table_definition=${TABLE}::${TABLE_DIR}/schema.json@NEWLINE_DELIMITED_JSON=${GCS_PREFIX}/*
   --destination_table=${STAGING_PROJECT}:${STAGING_DATASET}.${TARGET_TABLE}
 )
-1>&2 ${BQ_QUERY[@]} "SELECT J.datarepo_row_id, S.*, ${SELECTCOLUMNS}
+1>&2 ${BQ_QUERY[@]} "SELECT J.datarepo_row_id, S.*, ${REPO_KEYS}
   FROM ${TABLE} S FULL JOIN \`${JADE_PROJECT}.${JADE_DATASET}.${TABLE}\` J
   USING (${PK_COLS}) WHERE ${FULL_DIFF}"
 
