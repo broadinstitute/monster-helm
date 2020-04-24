@@ -49,13 +49,10 @@ data:
       secondsAfterSuccess: {{ .workflowTTL.secondsAfterSuccess }}
       secondsAfterFailure: {{ .workflowTTL.secondsAfterFailure }}
     {{- end }}
-  config: |
-    # metricsConfig controls the path and port for prometheus metrics
-    metricsConfig:
-      disableLegacy: false 
-      enabled: true
-      path: /metrics
-      port: 8080
-    {{- end }}
+  metricsConfig: |
+    disableLegacy: false 
+    enabled: true
+    path: /metrics
+    port: 8080
   {{- end }}
 {{- end }}
