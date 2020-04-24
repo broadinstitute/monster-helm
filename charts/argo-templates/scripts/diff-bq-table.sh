@@ -15,6 +15,12 @@ for c in ${COMPARE_COLS//,/ }; do
 done
 declare -r FULL_DIFF=$(join_by ' OR ' "${COMPARISONS[@]}")
 
+declare -a PRIMARYCOLUMNS=()
+for col in ${PK_COLS//,/ }; do
+  PRIMARYCOLUMNS+=("${col} as datarepo_${col}")
+done
+declare -r SELECTCOLUMNS=$(join_by ', ' "${PRIMARYCOLUMNS[@]}")
+
 declare -r TARGET_TABLE=${TABLE}_joined
 
 # Join the data staged in GCS against the existing Jade data, filtering out identical rows.
@@ -32,7 +38,7 @@ declare -ra BQ_QUERY=(
   --external_table_definition=${TABLE}::${TABLE_DIR}/schema.json@NEWLINE_DELIMITED_JSON=${GCS_PREFIX}/*
   --destination_table=${STAGING_PROJECT}:${STAGING_DATASET}.${TARGET_TABLE}
 )
-1>&2 ${BQ_QUERY[@]} "SELECT J.datarepo_row_id, S.*
+1>&2 ${BQ_QUERY[@]} "SELECT J.datarepo_row_id, S.*, ${SELECTCOLUMNS}
   FROM ${TABLE} S FULL JOIN \`${JADE_PROJECT}.${JADE_DATASET}.${TABLE}\` J
   USING (${PK_COLS}) WHERE ${FULL_DIFF}"
 

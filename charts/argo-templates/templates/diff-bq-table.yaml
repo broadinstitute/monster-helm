@@ -137,7 +137,9 @@ spec:
           - name: rows-to-append-count
             valueFrom:
               parameter: '{{ "{{tasks.query-row-count.outputs.result}}" }}'
-
+          - name: join-table-name-output
+            valueFrom:
+              parameter: '{{ "{{tasks.join-staging-to-existing.outputs.result}}" }}'
     - name: join-staging-to-existing
       inputs:
         parameters:
