@@ -230,6 +230,15 @@ entries:
     urls:
     - https://github.com/broadinstitute/monster-helm/releases/download/argo-templates-0.0.1/argo-templates-0.0.1.tgz
     version: 0.0.1
+  - apiVersion: v2
+    created: "2020-04-27T15:27:30.800476177Z"
+    description: Collection of generic Argo templates
+    digest: dccb728e5f60e3f5ea94da11930ca6ca671c4c7a0771a41e28016146645c7a25
+    name: argo-templates
+    type: application
+    urls:
+    - https://github.com/broadinstitute/monster-helm/releases/download/argo-templates-0.0.0-DSPDC-915/argo-templates-0.0.0-DSPDC-915.tgz
+    version: 0.0.0-DSPDC-915
   gcp-managed-cert:
   - apiVersion: v2
     created: "2020-03-05T18:20:47.983963398Z"
