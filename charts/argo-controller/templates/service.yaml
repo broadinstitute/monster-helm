@@ -1,10 +1,24 @@
+{{- $metricsPort := .Values.prometheusMetrics.port }}
+---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Release.Name }}-prometheus-metrics-service
+  name: {{ .Release.Name }}-metrics-service
 spec:
   selector:
     app.kubernetes.io/name: {{ .Release.Name }}
   ports:
-    - port: {{ .Values.prometheusMetrics.port }}
-      targetPort: http
+    - port: {{ $metricsPort }}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ .Release.Name }}-metrics-service-monitor
+  labels:
+    label: {{ .Values.prometheusMetrics.label }}
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ .Release.Name }}
+  endpoints:
+    - port: {{ $metricsPort }}

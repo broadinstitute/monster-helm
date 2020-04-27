@@ -85,9 +85,10 @@
       "properties": {
         "enabled": { "const": true },
         "path": { "type": "string" },
-        "port": { "type": "integer" }
+        "port": { "type": "integer" },
+        "label": { "type": "string" }
       },
-      "required": ["enabled", "port", "path"]
+      "required": ["enabled", "port", "path", "label"]
     }
   },
   "required": ["executor", "persistence", "rbac", "debug", "clusterName", "workflowDefaults"]
