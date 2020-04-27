@@ -9,10 +9,13 @@ declare -r PK_COLS=$(cat ${TABLE_DIR}/primary-keys)
 
 # Build the WHERE clause of the SQL query.
 declare -a COMPARISONS=()
+declare -a PRIMARY_COLUMNS=()
 for c in ${PK_COLS//,/ }; do
   COMPARISONS+=("${c} IS NOT NULL")
+  PRIMARY_COLUMNS+=("${col} as datarepo_${col}")
 done
 declare -r FULL_DIFF=$(join_by ' AND ' "${COMPARISONS[@]}")
+declare -r REPO_KEYS=$(join_by ', ' "${PRIMARY_COLUMNS[@]}")
 
 declare -r TARGET_TABLE=${TABLE}_values
 
@@ -31,7 +34,7 @@ declare -ra BQ_QUERY=(
   --replace=true
   --destination_table=${PROJECT}:${DATASET}.${TARGET_TABLE}
 )
-1>&2  ${BQ_QUERY[@]} "SELECT * EXCEPT (datarepo_row_id)
+1>&2  ${BQ_QUERY[@]} "SELECT * EXCEPT (datarepo_row_id, ${REPO_KEYS})
   FROM \`${PROJECT}.${DATASET}.${INPUT_TABLE}\`
   WHERE ${FULL_DIFF}"
 
