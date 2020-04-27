@@ -51,7 +51,7 @@ data:
     {{- end }}
   {{- with .Values.prometheusMetrics }}
   metricsConfig: |
-    disableLegacy: false # Switch to "true" to disable legacy metrics. "false" by default
+    disableLegacy: true
     enabled: {{ .enabled }}
     path: {{ .path }}
     port: {{ .port }}
