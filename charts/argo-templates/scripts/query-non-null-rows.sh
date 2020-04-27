@@ -12,7 +12,7 @@ declare -a COMPARISONS=()
 declare -a PRIMARY_COLUMNS=()
 for c in ${PK_COLS//,/ }; do
   COMPARISONS+=("${c} IS NOT NULL")
-  PRIMARY_COLUMNS+=("${col} as datarepo_${col}")
+  PRIMARY_COLUMNS+=("${c} as datarepo_${c}")
 done
 declare -r FULL_DIFF=$(join_by ' AND ' "${COMPARISONS[@]}")
 declare -r REPO_KEYS=$(join_by ', ' "${PRIMARY_COLUMNS[@]}")
