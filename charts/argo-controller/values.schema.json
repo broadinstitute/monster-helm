@@ -80,10 +80,10 @@
       },
       "required": ["podGarbageCollection", "workflowTTL"]
     },
-    "prometheusMetrics": {
+    "metrics": {
       "type": "object",
       "properties": {
-        "enabled": { "const": true },
+        "enabled": { "type": "boolean" },
         "path": { "type": "string" },
         "port": { "type": "integer" },
         "label": { "type": "string" }

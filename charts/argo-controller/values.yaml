@@ -7,7 +7,7 @@ workflowDefaults:
     enabled: false
   workflowTTL:
     enabled: false
-prometheusMetrics:
+metrics:
   enabled: true
   path: /metrics
   port: 8080

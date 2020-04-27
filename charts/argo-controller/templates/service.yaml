@@ -1,5 +1,5 @@
-{{- $metricsPort := .Values.prometheusMetrics.port }}
 ---
+{- if .Values.metrics.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -8,17 +8,20 @@ spec:
   selector:
     app.kubernetes.io/name: {{ .Release.Name }}
   ports:
-    - port: {{ $metricsPort }}
+    - port: {{ .Values.metrics.port }}
+{{- end }}
 ---
+{{- if .Values.metrics.enabled }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: {{ .Release.Name }}-metrics-service-monitor
   labels:
-    label: {{ .Values.prometheusMetrics.label }}
+    monitorLabel: {{ .Values.metrics.label }}
 spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ .Release.Name }}
   endpoints:
-    - port: {{ $metricsPort }}
+    - port: {{ .Values.metrics.port }}
+{{- end }}

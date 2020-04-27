@@ -49,11 +49,11 @@ data:
       secondsAfterSuccess: {{ .workflowTTL.secondsAfterSuccess }}
       secondsAfterFailure: {{ .workflowTTL.secondsAfterFailure }}
     {{- end }}
-  {{- with .Values.prometheusMetrics }}
+  {{- end }}
+  {{- with .Values.metrics }}
   metricsConfig: |
     disableLegacy: true
     enabled: {{ .enabled }}
     path: {{ .path }}
     port: {{ .port }}
   {{- end }}
-{{- end }}
