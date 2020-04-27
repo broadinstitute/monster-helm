@@ -49,10 +49,11 @@ data:
       secondsAfterSuccess: {{ .workflowTTL.secondsAfterSuccess }}
       secondsAfterFailure: {{ .workflowTTL.secondsAfterFailure }}
     {{- end }}
+  {{- with .Values.prometheusMetrics }}
   metricsConfig: |
-    disableLegacy: false 
-    enabled: true
-    path: /metrics
-    port: 8080
+    disableLegacy: false # Switch to "true" to disable legacy metrics. "false" by default
+    enabled: {{ .enabled }}
+    path: {{ .path }}
+    port: {{ .port }}
   {{- end }}
 {{- end }}
