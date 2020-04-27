@@ -137,6 +137,9 @@ spec:
           - name: rows-to-append-count
             valueFrom:
               parameter: '{{ "{{tasks.query-row-count.outputs.result}}" }}'
+          - name: join-table-name
+            valueFrom:
+              parameter: '{{ "{{tasks.join-staging-to-existing.outputs.result}}" }}'
       metrics:
         prometheus:
           {{- include "argo.collect-execution-metrics" . | indent 10 }}
@@ -156,7 +159,6 @@ spec:
             when: '{{status}} == Succeeded'
             gauge: 
               value: '{{ outputs.parameters.rows-to-append-count }}'
-
 
     - name: join-staging-to-existing
       inputs:
