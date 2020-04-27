@@ -11,6 +11,7 @@ spec:
         parameters:
           - name: s3-bucket
           - name: s3-path
+          - name: s3-access-secret
           - name: local-path
           - name: pvc-name
           - name: memory
@@ -22,8 +23,12 @@ spec:
       {{- include "argo.retry" . | indent 6 }}
       container:
         image: us.gcr.io/broad-dsp-gcr-public/s3cmd:1.0.0
-        command: [s3cmd, sync]
+        envFrom:
+          - secretRef:
+              name: '{{ "{{inputs.parameters.s3-access-secret}}" }}'
+        command: [s3cmd, get]
         args:
+          - --continue
           - {{ "s3://{{inputs.parameters.s3-bucket}}/{{inputs.parameters.s3-path}}" }}
           - {{ "/state/{{inputs.parameters.local-path}}" }}
         volumeMounts:
