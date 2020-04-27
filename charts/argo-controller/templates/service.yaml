@@ -1,5 +1,5 @@
----
 {{- if .Values.metrics.enabled }}
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -9,9 +9,7 @@ spec:
     app.kubernetes.io/name: {{ .Release.Name }}
   ports:
     - port: {{ .Values.metrics.port }}
-{{- end }}
 ---
-{{- if .Values.metrics.enabled }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
