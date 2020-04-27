@@ -140,6 +140,7 @@ spec:
           - name: join-table-name
             valueFrom:
               parameter: '{{ "{{tasks.join-staging-to-existing.outputs.result}}" }}'
+<<<<<<< HEAD
       metrics:
         prometheus:
           {{- include "argo.collect-execution-metrics" . | indent 10 }}
