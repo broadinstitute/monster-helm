@@ -140,7 +140,7 @@ spec:
       metrics:
         prometheus:
           {{- include "argo.collect-execution-metrics" . | indent 10 }}
-          - name: rows_to_delete_gauge
+          - name: rows_to_delete
             help: 'Number of rows to be deleted'
             labels: 
               - key: table-name
@@ -148,7 +148,7 @@ spec:
             when: '{{status}} == Succeeded'
             gauge: 
               value: '{{ outputs.parameters.ids-to-delete-count }}'
-          - name: rows_to_append_gauge
+          - name: rows_to_append
             help: 'Number of rows to be added'
             labels: 
               - key: table-name
