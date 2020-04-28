@@ -2,5 +2,5 @@ apiVersion: v2
 name: argo-templates
 description: Collection of generic Argo templates
 type: application
-version: 0.0.3
+version: 0.0.4
 
