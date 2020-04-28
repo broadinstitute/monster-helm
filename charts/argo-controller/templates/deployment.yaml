@@ -34,5 +34,5 @@ spec:
           {{- if .Values.metrics.enabled }}
           ports:
             - containerPort: {{ .Values.metrics.port }}
-              name: http
+              name: metrics
           {{- end }}
