@@ -85,10 +85,9 @@
       "properties": {
         "enabled": { "type": "boolean" },
         "path": { "type": "string" },
-        "port": { "type": "integer" },
-        "label": { "type": "string" }
+        "port": { "type": "integer" }
       },
-      "required": ["enabled", "port", "path", "label"]
+      "required": ["enabled", "port", "path"]
     }
   },
   "required": ["executor", "persistence", "rbac", "debug", "clusterName", "workflowDefaults"]
