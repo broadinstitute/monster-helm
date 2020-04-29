@@ -50,6 +50,7 @@ data:
       secondsAfterFailure: {{ .workflowTTL.secondsAfterFailure }}
     {{- end }}
   {{- end }}
+  {{- end }}
   {{- with .Values.metrics }}
   metricsConfig: |
     disableLegacy: true
