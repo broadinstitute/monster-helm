@@ -31,3 +31,8 @@ spec:
             - name: UPPERIO_DB_DEBUG
               value: "1"
           {{- end }}
+          {{- if .Values.metrics.enabled }}
+          ports:
+            - containerPort: {{ .Values.metrics.port }}
+              name: metrics
+          {{- end }}

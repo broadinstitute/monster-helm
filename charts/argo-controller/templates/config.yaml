@@ -51,3 +51,10 @@ data:
     {{- end }}
   {{- end }}
   {{- end }}
+  {{- with .Values.metrics }}
+  metricsConfig: |
+    disableLegacy: true
+    enabled: {{ .enabled }}
+    path: {{ .path }}
+    port: {{ .port }}
+  {{- end }}
