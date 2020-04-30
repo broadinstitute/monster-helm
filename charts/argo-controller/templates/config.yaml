@@ -13,6 +13,13 @@ kind: ConfigMap
 metadata:
   name: {{ .Release.Name }}-config
 data:
+  {{- if .Values.logs.enabled }}
+  artifactRepository: |
+    archiveLogs: true
+    gcs:
+      bucket: {{ .Values.logs.bucket }}
+      keyFormat: {{ .Values.logs.prefix }}/key
+  {{- end }}
   containerRuntimeExecutor: {{ .Values.executor }}
   {{- if .Values.debug }}
   executor: |
