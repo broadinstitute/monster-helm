@@ -79,6 +79,15 @@
         }
       },
       "required": ["podGarbageCollection", "workflowTTL"]
+    },
+    "metrics": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "path": { "type": "string" },
+        "port": { "type": "integer" }
+      },
+      "required": ["enabled", "port", "path"]
     }
   },
   "required": ["executor", "persistence", "rbac", "debug", "clusterName", "workflowDefaults"]
