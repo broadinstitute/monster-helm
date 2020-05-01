@@ -18,7 +18,7 @@ data:
     archiveLogs: true
     gcs:
       bucket: {{ .Values.logs.bucket }}
-      keyFormat: '{{"{{ workflow.name }}/{{ pod.name }}"}}'
+      keyFormat: logs
   {{- end }}
   containerRuntimeExecutor: {{ .Values.executor }}
   {{- if .Values.debug }}
