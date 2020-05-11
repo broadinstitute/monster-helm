@@ -150,18 +150,18 @@ spec:
             help: 'Number of rows to be deleted'
             labels:
               - key: table-name
-              - value: '{{inputs.parameters.table-name}}'
-            when: '{{status}} == Succeeded'
+              - value: '{{ "{{inputs.parameters.table-name}}" }}'
+            when: '{{ "{{status}}" }} == Succeeded'
             gauge:
-              value: '{{ outputs.parameters.ids-to-delete-count }}'
+              value: '{{ "{{outputs.parameters.ids-to-delete-count}}" }}'
           - name: rows_to_append
             help: 'Number of rows to be added'
             labels:
               - key: table-name
-              - value: '{{inputs.parameters.table-name}}'
-            when: '{{status}} == Succeeded'
+              - value: '{{ "{{inputs.parameters.table-name}}" }}'
+            when: '{{ "{{status}}" }} == Succeeded'
             gauge:
-              value: '{{ outputs.parameters.rows-to-append-count }}'
+              value: '{{ "{{outputs.parameters.rows-to-append-count}}" }}'
       {{- end }}
 
     - name: join-staging-to-existing
