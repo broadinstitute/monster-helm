@@ -63,7 +63,9 @@
       "properties": {
         "create": { "type": "boolean" },
         "name": { "type": "string" },
-        "schemaImageName": { "type": "string" }
+        "schemaImageName": { "type": "string" },
+        "schemaImageVersion": { "type": "string" },
+        "generateMetrics": { "type": "boolean" }
       },
       "required": ["create"]
     }

@@ -1,9 +1,10 @@
-{{- if .Values.diffBQTable.create }}
-{{- $schemaImage := printf "%s:%s" .Values.diffBQTable.schemaImageName (default "latest" .Chart.AppVersion) }}
+{{- with .Values.diffBQTable }}
+{{- if .create }}
+{{- $schemaImage := printf "%s:%s" .schemaImageName (default "latest" .schemaImageVersion ) }}
 apiVersion: argoproj.io/v1alpha1
 kind: WorkflowTemplate
 metadata:
-  name: {{ .Values.diffBQTable.name }}
+  name: {{ .name }}
 spec:
   templates:
     - name: main
@@ -140,25 +141,27 @@ spec:
           - name: join-table-name
             valueFrom:
               parameter: '{{ "{{tasks.join-staging-to-existing.outputs.result}}" }}'
+      {{- if .generateMetrics }}
       metrics:
         prometheus:
           {{- include "argo.collect-execution-metrics" . | indent 10 }}
           - name: rows_to_delete
             help: 'Number of rows to be deleted'
-            labels: 
+            labels:
               - key: table-name
               - value: '{{inputs.parameters.table-name}}'
             when: '{{status}} == Succeeded'
-            gauge: 
+            gauge:
               value: '{{ outputs.parameters.ids-to-delete-count }}'
           - name: rows_to_append
             help: 'Number of rows to be added'
-            labels: 
+            labels:
               - key: table-name
               - value: '{{inputs.parameters.table-name}}'
             when: '{{status}} == Succeeded'
-            gauge: 
+            gauge:
               value: '{{ outputs.parameters.rows-to-append-count }}'
+      {{- end }}
 
     - name: join-staging-to-existing
       inputs:
@@ -284,4 +287,5 @@ spec:
         command: [bash]
         source: |
         {{- include "argo.render-lines" (.Files.Lines "scripts/extract-bq-table.sh") | indent 10 }}
+{{- end }}
 {{- end }}

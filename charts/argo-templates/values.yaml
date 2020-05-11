@@ -14,3 +14,4 @@ createBQDataset:
   create: false
 diffBQTable:
   create: false
+  generateMetrics: false
