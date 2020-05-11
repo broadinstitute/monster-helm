@@ -1,6 +1,7 @@
 {{- with .Values.diffBQTable }}
 {{- if .create }}
 {{- $schemaImage := printf "%s:%s" .schemaImageName (default "latest" .schemaImageVersion ) }}
+{{- $alwaysPull := not .schemaImageVersion }}
 apiVersion: argoproj.io/v1alpha1
 kind: WorkflowTemplate
 metadata:
@@ -176,6 +177,9 @@ spec:
       {{- include "argo.retry" . | indent 6 }}
       script:
         image: {{ $schemaImage }}
+        {{- if $alwaysPull }}
+        imagePullPolicy: Always
+        {{- end }}
         env:
           - name: STAGING_PROJECT
             value: '{{ "{{inputs.parameters.staging-bq-project}}" }}'
@@ -203,6 +207,9 @@ spec:
       {{- include "argo.retry" . | indent 6 }}
       script:
         image: {{ $schemaImage }}
+        {{- if $alwaysPull }}
+        imagePullPolicy: Always
+        {{- end }}
         env:
           - name: PROJECT
             value: '{{ "{{inputs.parameters.bq-project}}" }}'
@@ -226,6 +233,9 @@ spec:
       {{- include "argo.retry" . | indent 6 }}
       script:
         image: {{ $schemaImage }}
+        {{- if $alwaysPull }}
+        imagePullPolicy: Always
+        {{- end }}
         env:
           - name: PROJECT
             value: '{{ "{{inputs.parameters.bq-project}}" }}'
