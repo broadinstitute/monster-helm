@@ -1,11 +1,10 @@
-{{- with .Values.diffBQTable }}
-{{- if .create }}
-{{- $schemaImage := printf "%s:%s" .schemaImageName (default "latest" .schemaImageVersion ) }}
-{{- $alwaysPull := not .schemaImageVersion }}
+{{- if .Values.diffBQTable }}
+{{- $schemaImage := printf "%s:%s" .Values.diffBQTable.schemaImageName (default "latest" .Values.diffBQTable.schemaImageVersion ) }}
+{{- $alwaysPull := not .Values.diffBQTable.schemaImageVersion }}
 apiVersion: argoproj.io/v1alpha1
 kind: WorkflowTemplate
 metadata:
-  name: {{ .name }}
+  name: {{ .Values.diffBQTable.name }}
 spec:
   templates:
     - name: main
@@ -297,5 +296,4 @@ spec:
         command: [bash]
         source: |
         {{- include "argo.render-lines" (.Files.Lines "scripts/extract-bq-table.sh") | indent 10 }}
-{{- end }}
 {{- end }}
