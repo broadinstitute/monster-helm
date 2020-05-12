@@ -77,7 +77,7 @@
             "schemaImageVersion": { "type": "string" },
             "generateMetrics": { "type": "boolean" }
           },
-          "required": ["create", "name", "schemaImageName", "schemaImageVersion"]
+          "required": ["create", "name", "schemaImageName"]
         }
       ]
     },
