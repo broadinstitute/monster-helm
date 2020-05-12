@@ -99,4 +99,4 @@ spec:
         command: [bash]
         source: |
         {{- include "argo.render-lines" (.Files.Lines "scripts/extract-bq-table.sh") | indent 10 }}
-  {{- end }}
+{{- end }}
