@@ -1,0 +1,102 @@
+{{- if (or .Values.exportBQTable.create .Values.diffBQTable.create) }}
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: {{ default (printf "%s-export" .Values.diffBQTable.name) .Values.exportBQTable.name }}
+spec:
+  templates:
+    - name: main
+      inputs:
+        parameters:
+          - name: bq-project
+          - name: bq-dataset
+          - name: bq-table
+          - name: output-format
+          - name: gcs-bucket
+          - name: gcs-prefix
+      dag:
+        tasks:
+          - name: count-rows
+            template: get-bq-table-size
+            arguments:
+              parameters:
+                - name: bq-project
+                  value: '{{ "{{inputs.parameters.bq-project}}" }}'
+                - name: bq-dataset
+                  value: '{{ "{{inputs.parameters.bq-dataset}}" }}'
+                - name: bq-table
+                  value: '{{ "{{inputs.parameters.bq-table}}" }}'
+          - name: export-rows
+            dependencies: [count-rows]
+            when: '{{ "{{tasks.count-rows.outputs.result}} > 0" }}'
+            template: extract-bq-table
+            arguments:
+              parameters:
+                - name: bq-project
+                  value: '{{ "{{inputs.parameters.bq-project}}" }}'
+                - name: bq-dataset
+                  value: '{{ "{{inputs.parameters.bq-dataset}}" }}'
+                - name: bq-table
+                  value: '{{ "{{inputs.parameters.bq-table}}" }}'
+                - name: output-format
+                  value: '{{ "{{inputs.parameters.output-format}}" }}'
+                - name: gcs-bucket
+                  value: '{{ "{{inputs.parameters.gcs-bucket}}" }}'
+                - name: gcs-prefix
+                  value: '{{ "{{inputs.parameters.gcs-prefix}}" }}'
+      outputs:
+        parameters:
+          - name: row-count
+            valueFrom:
+              parameter: '{{ "{{tasks.count-rows.outputs.result}}" }}'
+
+
+    - name: get-bq-table-size
+      inputs:
+        parameters:
+          - name: bq-project
+          - name: bq-dataset
+          - name: bq-table
+      {{ include "argo.retry" . | indent 6 }}
+      script:
+        image: google/cloud-sdk:slim
+        env:
+          - name: PROJECT
+            value: '{{ "{{inputs.parameters.bq-project}}" }}'
+          - name: DATASET
+            value: '{{ "{{inputs.parameters.bq-dataset}}" }}'
+          - name: TABLE
+            value: '{{ "{{inputs.parameters.bq-table}}" }}'
+        command: [bash]
+        source: |
+        {{- include "argo.render-lines" (.Files.Lines "scripts/get-bq-table-size.sh") | indent 10 }}
+
+    - name: extract-bq-table
+      inputs:
+        parameters:
+          - name: bq-table
+          - name: bq-project
+          - name: bq-dataset
+          - name: output-format
+          - name: gcs-bucket
+          - name: gcs-prefix
+      {{- include "argo.retry" . | indent 6 }}
+      script:
+        image: google/cloud-sdk:slim
+        env:
+          - name: PROJECT
+            value: '{{ "{{inputs.parameters.bq-project}}" }}'
+          - name: DATASET
+            value: '{{ "{{inputs.parameters.bq-dataset}}" }}'
+          - name: TABLE
+            value: '{{ "{{inputs.parameters.bq-table}}" }}'
+          - name: OUTPUT_FORMAT
+            value: '{{ "{{inputs.parameters.output-format}}" }}'
+          - name: GCS_BUCKET
+            value: '{{ "{{inputs.parameters.gcs-bucket}}" }}'
+          - name: GCS_PREFIX
+            value: '{{ "{{inputs.parameters.gcs-prefix}}" }}'
+        command: [bash]
+        source: |
+        {{- include "argo.render-lines" (.Files.Lines "scripts/extract-bq-table.sh") | indent 10 }}
+  {{- end }}

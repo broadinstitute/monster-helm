@@ -1,6 +1,7 @@
-{{- if .Values.diffBQTable }}
+{{- if .Values.diffBQTable.create }}
 {{- $schemaImage := printf "%s:%s" .Values.diffBQTable.schemaImageName (default "latest" .Values.diffBQTable.schemaImageVersion ) }}
 {{- $alwaysPull := not .Values.diffBQTable.schemaImageVersion }}
+{{- $exportTemplate := default (printf "%s-export" .Values.diffBQTable.name) .Values.exportBQTable.name }}
 apiVersion: argoproj.io/v1alpha1
 kind: WorkflowTemplate
 metadata:
@@ -21,7 +22,7 @@ spec:
           - name: jade-bq-dataset
       dag:
         tasks:
-          # 1) Build a join table containing both IDs to delete and new rows to append.
+          # Build a join table containing both IDs to delete and new rows to append.
           - name: join-staging-to-existing
             template: join-staging-to-existing
             arguments:
@@ -40,25 +41,11 @@ spec:
                   value: '{{ "{{inputs.parameters.jade-bq-project}}" }}'
                 - name: jade-bq-dataset
                   value: '{{ "{{inputs.parameters.jade-bq-dataset}}" }}'
-          # 2a) Query just the IDs to delete from the join table.
-          - name: query-ids-to-delete
-            dependencies: [join-staging-to-existing]
-            template: query-ids-to-delete
-            arguments:
-              parameters:
-                - name: table-name
-                  value: '{{ "{{inputs.parameters.table-name}}" }}'
-                - name: join-table-name
-                  value: '{{ "{{tasks.join-staging-to-existing.outputs.result}}" }}'
-                - name: bq-project
-                  value: '{{ "{{inputs.parameters.staging-bq-project}}" }}'
-                - name: bq-dataset
-                  value: '{{ "{{inputs.parameters.staging-bq-dataset}}" }}'
-          # 2b) Check how many IDs there are to delete and if there are IDs to delete, extract them to GCS.
+          # Check how many IDs there are to delete and if there are IDs to delete, extract them to GCS.
           - name: export-deletes
             dependencies: [query-ids-to-delete]
             templateRef:
-              name: export-to-gcs
+              name: {{ $exportTemplate }}
               template: main
             arguments:
               parameters:
@@ -76,25 +63,11 @@ spec:
                   value: '{{ "{{inputs.parameters.gcs-bucket}}" }}'
                 - name: gcs-prefix
                   value: '{{ "{{inputs.parameters.old-ids-output-prefix}}" }}'
-          # 3a) Query just the rows to append from the join table.
-          - name: query-rows-to-append
-            dependencies: [join-staging-to-existing]
-            template: query-rows-to-append
-            arguments:
-              parameters:
-                - name: table-name
-                  value: '{{ "{{inputs.parameters.table-name}}" }}'
-                - name: join-table-name
-                  value: '{{ "{{tasks.join-staging-to-existing.outputs.result}}" }}'
-                - name: bq-project
-                  value: '{{ "{{inputs.parameters.staging-bq-project}}" }}'
-                - name: bq-dataset
-                  value: '{{ "{{inputs.parameters.staging-bq-dataset}}" }}'
-          # 3b) Check how many rows there are to append and if there are rows to append, extract them to GCS.
+          # Check how many rows there are to append and if there are rows to append, extract them to GCS.
           - name: export-appends
             dependencies: [query-rows-to-append]
             templateRef:
-              name: export-to-gcs
+              name: {{ $exportTemplate }}
               template: main
               parameters:
                 - name: bq-project
@@ -115,10 +88,10 @@ spec:
         parameters:
           - name: ids-to-delete-count
             valueFrom:
-              parameter: '{{ "{{tasks.query-id-count.outputs.result}}" }}'
+              parameter: '{{ "{{tasks.export-deletes.outputs.parameters.row-count}}" }}'
           - name: rows-to-append-count
             valueFrom:
-              parameter: '{{ "{{tasks.query-row-count.outputs.result}}" }}'
+              parameter: '{{ "{{tasks.export-appends.outputs.parameters.row-count}}" }}'
           - name: join-table-name
             valueFrom:
               parameter: '{{ "{{tasks.join-staging-to-existing.outputs.result}}" }}'
