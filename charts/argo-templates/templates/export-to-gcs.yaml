@@ -1,0 +1,82 @@
+{{- if .Values.exportBQTable }}
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: {{ .Values.exportBQTable.name }}
+spec:
+  templates:
+    - name: main
+      inputs:
+        parameters:
+          - name: table-name
+          - name: gcs-bucket
+          - name: input-prefix
+          - name: old-ids-output-prefix
+          - name: new-rows-output-prefix
+          - name: staging-bq-project
+          - name: staging-bq-dataset
+          - name: jade-bq-project
+          - name: jade-bq-dataset
+      dag:
+        tasks:
+          # 1) Build a join table containing both IDs to delete and new rows to append.
+    - name: get-bq-table-size
+      inputs:
+        parameters:
+          - name: bq-project
+          - name: bq-dataset
+          - name: bq-table
+      {{ include "argo.retry" . | indent 6 }}
+      script:
+        image: {{ $schemaImage }}
+        env:
+          - name: PROJECT
+            value: '{{ "{{inputs.parameters.bq-project}}" }}'
+          - name: DATASET
+            value: '{{ "{{inputs.parameters.bq-dataset}}" }}'
+          - name: TABLE
+            value: '{{ "{{inputs.parameters.bq-table}}" }}'
+        command: [bash]
+        source: |
+        {{- include "argo.render-lines" (.Files.Lines "scripts/get-bq-table-size.sh") | indent 10 }}
+
+    - name: extract-bq-table
+      inputs:
+        parameters:
+          - name: input-table-name
+          - name: bq-project
+          - name: bq-dataset
+          - name: output-format
+          - name: gcs-bucket
+          - name: gcs-prefix
+      {{- include "argo.retry" . | indent 6 }}
+      script:
+        image: {{ $schemaImage }}
+        env:
+          - name: PROJECT
+            value: '{{ "{{inputs.parameters.bq-project}}" }}'
+          - name: DATASET
+            value: '{{ "{{inputs.parameters.bq-dataset}}" }}'
+          - name: TABLE
+            value: '{{ "{{inputs.parameters.input-table-name}}" }}'
+          - name: OUTPUT_FORMAT
+            value: '{{ "{{inputs.parameters.output-format}}" }}'
+          - name: GCS_BUCKET
+            value: '{{ "{{inputs.parameters.gcs-bucket}}" }}'
+          - name: GCS_PREFIX
+            value: '{{ "{{inputs.parameters.gcs-prefix}}" }}'
+        command: [bash]
+        source: |
+        {{- include "argo.render-lines" (.Files.Lines "scripts/extract-bq-table.sh") | indent 10 }}
+      outputs:
+        parameters:
+          - name: ids-to-delete-count
+            valueFrom:
+              parameter: '{{ "{{tasks.query-id-count.outputs.result}}" }}'
+          - name: rows-to-append-count
+            valueFrom:
+              parameter: '{{ "{{tasks.query-row-count.outputs.result}}" }}'
+          - name: join-table-name
+            valueFrom:
+              parameter: '{{ "{{tasks.join-staging-to-existing.outputs.result}}" }}'
+  {{- end }}

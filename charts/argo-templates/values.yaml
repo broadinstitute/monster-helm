@@ -15,3 +15,5 @@ createBQDataset:
 diffBQTable:
   create: false
   generateMetrics: false
+exportBQTable:
+  create: false
