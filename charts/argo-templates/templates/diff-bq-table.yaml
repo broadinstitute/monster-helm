@@ -41,7 +41,21 @@ spec:
                   value: '{{ "{{inputs.parameters.jade-bq-project}}" }}'
                 - name: jade-bq-dataset
                   value: '{{ "{{inputs.parameters.jade-bq-dataset}}" }}'
-          # Check how many IDs there are to delete and if there are IDs to delete, extract them to GCS.
+
+          # Export the IDs of existing rows that should be soft-deleted.
+          - name: query-ids-to-delete
+            dependencies: [join-staging-to-existing]
+            template: query-ids-to-delete
+            arguments:
+              parameters:
+                - name: table-name
+                  value: '{{ "{{inputs.parameters.table-name}}" }}'
+                - name: join-table-name
+                  value: '{{ "{{tasks.join-staging-to-existing.outputs.result}}" }}'
+                - name: bq-project
+                  value: '{{ "{{inputs.parameters.staging-bq-project}}" }}'
+                - name: bq-dataset
+                  value: '{{ "{{inputs.parameters.staging-bq-dataset}}" }}'
           - name: export-deletes
             dependencies: [query-ids-to-delete]
             templateRef:
@@ -55,15 +69,27 @@ spec:
                   value: '{{ "{{inputs.parameters.staging-bq-dataset}}" }}'
                 - name: bq-table
                   value: '{{ "{{tasks.query-ids-to-delete.outputs.result}}" }}'
-                - name: input-table-name
-                  value: '{{ "{{tasks.query-ids-to-delete.outputs.result}}" }}'
                 - name: output-format
                   value: CSV
                 - name: gcs-bucket
                   value: '{{ "{{inputs.parameters.gcs-bucket}}" }}'
                 - name: gcs-prefix
                   value: '{{ "{{inputs.parameters.old-ids-output-prefix}}" }}'
-          # Check how many rows there are to append and if there are rows to append, extract them to GCS.
+
+          # Export the values of new rows that should be appended.
+          - name: query-rows-to-append
+            dependencies: [join-staging-to-existing]
+            template: query-rows-to-append
+            arguments:
+              parameters:
+                - name: table-name
+                  value: '{{ "{{inputs.parameters.table-name}}" }}'
+                - name: join-table-name
+                  value: '{{ "{{tasks.join-staging-to-existing.outputs.result}}" }}'
+                - name: bq-project
+                  value: '{{ "{{inputs.parameters.staging-bq-project}}" }}'
+                - name: bq-dataset
+                  value: '{{ "{{inputs.parameters.staging-bq-dataset}}" }}'
           - name: export-appends
             dependencies: [query-rows-to-append]
             templateRef:
@@ -75,8 +101,6 @@ spec:
                 - name: bq-dataset
                   value: '{{ "{{inputs.parameters.staging-bq-dataset}}" }}'
                 - name: bq-table
-                  value: '{{ "{{tasks.query-rows-to-append.outputs.result}}" }}'
-                - name: input-table-name
                   value: '{{ "{{tasks.query-rows-to-append.outputs.result}}" }}'
                 - name: output-format
                   value: NEWLINE_DELIMITED_JSON
