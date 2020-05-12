@@ -95,6 +95,7 @@ spec:
             templateRef:
               name: {{ $exportTemplate }}
               template: main
+            arguments:
               parameters:
                 - name: bq-project
                   value: '{{ "{{inputs.parameters.staging-bq-project}}" }}'
