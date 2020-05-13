@@ -87,10 +87,32 @@
         "create": { "type": "boolean" },
         "name": { "type": "string" }
       }
+    },
+    "ingestFile": {
+      "type": "object",
+      "properties": {
+        "create": { "type": "boolean" },
+        "name": { "type": "string" }
+      }
+    },
+    "ingestTable": {
+      "type": "object",
+      "properties": {
+        "create": { "type": "boolean" },
+        "name": { "type": "string" }
+      }
+    },
+    "softDeleteTable": {
+      "type": "object",
+      "properties": {
+        "create": { "type": "boolean" },
+        "name": { "type": "string" }
+      }
     }
   },
   "required": ["generatePVC", "deletePVC",
                "downloadFTPFile", "downloadS3File",
                "copyToGCS", "gsutilRsync",
-               "createBQDataset", "diffBQTable", "exportBQTable"]
+               "createBQDataset", "diffBQTable", "exportBQTable",
+               "ingestFile", "ingestTable", "softDeleteTable"]
 }
