@@ -7,8 +7,6 @@ workflowDefaults:
     enabled: false
   workflowTTL:
     enabled: false
-logs:
-  enabled: false
 metrics:
   enabled: true
   path: /metrics
