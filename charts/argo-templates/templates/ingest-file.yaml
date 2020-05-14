@@ -17,7 +17,6 @@ spec:
           - name: timeout
           - name: sa-secret
           - name: sa-secret-key
-          - name: repo-secret-name
       dag:
         tasks:
           # 1) Make sure that something doesn't already exist at the target path
@@ -111,7 +110,7 @@ spec:
       volumes:
         - name: '{{ $secretVolume }}'
           secret:
-            secretName: '{{ "{{inputs.parameters.repo-secret-name}}" }}'
+            secretName: '{{ "{{inputs.parameters.sa-secret}}" }}'
       script:
         image: us.gcr.io/broad-dsp-gcr-public/monster-auth-req-py:1.0.1
         env:
@@ -144,7 +143,7 @@ spec:
       volumes:
         - name: '{{ $secretVolume }}'
           secret:
-            secretName: '{{ "{{inputs.parameters.repo-secret-name}}" }}'
+            secretName: '{{ "{{inputs.parameters.sa-secret}}" }}'
       script:
         image: us.gcr.io/broad-dsp-gcr-public/monster-auth-req-py:1.0.1
         env:
@@ -179,7 +178,7 @@ spec:
       volumes:
         - name: '{{ $secretVolume }}'
           secret:
-            secretName: '{{ "{{inputs.parameters.repo-secret-name}}" }}'
+            secretName: '{{ "{{inputs.parameters.sa-secret}}" }}'
       script:
         image: us.gcr.io/broad-dsp-gcr-public/monster-auth-req-py:1.0.1
         env:
@@ -209,7 +208,7 @@ spec:
       volumes:
         - name: '{{ $secretVolume }}'
           secret:
-            secretName: '{{ "{{inputs.parameters.repo-secret-name}}" }}'
+            secretName: '{{ "{{inputs.parameters.sa-secret}}" }}'
       script:
         image: us.gcr.io/broad-dsp-gcr-public/monster-auth-req-py:1.0.1
         env:
