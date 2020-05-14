@@ -127,9 +127,7 @@ spec:
             mountPath: '{{ $mountPath }}'
         command: [python]
         source: |
-          {{- range .Files.Lines "scripts/check-existing-file.py" }}
-          {{ . }}
-          {{- end }}
+          {{- include "argo.render-lines" (.Files.Lines "scripts/check-existing-file.py") | indent 10 }}
     - name: submit-file-ingest
       inputs:
         parameters:
@@ -164,9 +162,7 @@ spec:
             mountPath: '{{ $mountPath }}'
         command: [python]
         source: |
-          {{- range .Files.Lines "scripts/submit-file-ingest.py" }}
-          {{ . }}
-          {{- end }}
+          {{- include "argo.render-lines" (.Files.Lines "scripts/submit-file-ingest.py") | indent 10 }}
     - name: poll-ingest-job
       inputs:
         parameters:
@@ -195,9 +191,7 @@ spec:
             mountPath: '{{ $mountPath }}'
         command: [python]
         source: |
-          {{- range .Files.Lines "scripts/poll-ingest-job.py" }}
-          {{ . }}
-          {{- end }}
+          {{- include "argo.render-lines" (.Files.Lines "scripts/poll-ingest-job.py") | indent 10 }}
     - name: get-job-result
       inputs:
         parameters:
@@ -225,7 +219,5 @@ spec:
             mountPath: '{{ $mountPath }}'
         command: [python]
         source: |
-          {{- range .Files.Lines "scripts/get-job-result.py" }}
-          {{ . }}
-          {{- end }}
+          {{- include "argo.render-lines" (.Files.Lines "scripts/get-job-result.py") | indent 10 }}
 {{- end }}

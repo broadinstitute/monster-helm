@@ -85,9 +85,7 @@ spec:
             mountPath: '{{ $mountPath }}'
         command: [python]
         source: |
-          {{- range .Files.Lines "scripts/submit-table-soft-delete.py" }}
-          {{ . }}
-          {{- end }}
+          {{- include "argo.render-lines" (.Files.Lines "scripts/submit-table-soft-delete.py") | indent 10 }}
     - name: poll-job
       inputs:
         parameters:
@@ -116,7 +114,5 @@ spec:
             mountPath: '{{ $mountPath }}'
         command: [python]
         source: |
-          {{- range .Files.Lines "scripts/poll-ingest-job.py" }}
-          {{ . }}
-          {{- end }}
+          {{- include "argo.render-lines" (.Files.Lines "scripts/poll-ingest-job.py") | indent 10 }}
 {{- end }}
