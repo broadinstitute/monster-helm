@@ -79,7 +79,7 @@ spec:
           - name: TABLE_NAME
             value: '{{ "{{inputs.parameters.table-name}}" }}'
           - name: GOOGLE_APPLICATION_CREDENTIALS
-            value: '{{ printf "%s/{inputs.parameters.sa-secret-key}}" $mountPath }}'
+            value: '{{ printf "%s/{{inputs.parameters.sa-secret-key}}" $mountPath }}'
         volumeMounts:
           - name: '{{ $secretVolume }}'
             mountPath: '{{ $mountPath }}'
@@ -110,7 +110,7 @@ spec:
           - name: TIMEOUT
             value: '{{ "{{inputs.parameters.timeout}}" }}'
           - name: GOOGLE_APPLICATION_CREDENTIALS
-            value: '{{ printf "%s/{inputs.parameters.sa-secret-key}}" $mountPath }}'
+            value: '{{ printf "%s/{{inputs.parameters.sa-secret-key}}" $mountPath }}'
         volumeMounts:
           - name: '{{ $secretVolume }}'
             mountPath: '{{ $mountPath }}'
