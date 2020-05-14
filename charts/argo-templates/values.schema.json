@@ -59,17 +59,60 @@
       "required": ["create"]
     },
     "diffBQTable": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "create": { "const": false }
+          },
+          "additionalProperties": false,
+          "required": ["create"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "create": { "const": true },
+            "name": { "type": "string" },
+            "schemaImageName": { "type": "string" },
+            "schemaImageVersion": { "type": "string" },
+            "generateMetrics": { "type": "boolean" }
+          },
+          "required": ["create", "name", "schemaImageName"]
+        }
+      ]
+    },
+    "exportBQTable": {
       "type": "object",
       "properties": {
         "create": { "type": "boolean" },
-        "name": { "type": "string" },
-        "schemaImageName": { "type": "string" }
-      },
-      "required": ["create"]
+        "name": { "type": "string" }
+      }
+    },
+    "ingestFile": {
+      "type": "object",
+      "properties": {
+        "create": { "type": "boolean" },
+        "name": { "type": "string" }
+      }
+    },
+    "ingestTable": {
+      "type": "object",
+      "properties": {
+        "create": { "type": "boolean" },
+        "name": { "type": "string" }
+      }
+    },
+    "softDeleteTable": {
+      "type": "object",
+      "properties": {
+        "create": { "type": "boolean" },
+        "name": { "type": "string" }
+      }
     }
   },
   "required": ["generatePVC", "deletePVC",
                "downloadFTPFile", "downloadS3File",
                "copyToGCS", "gsutilRsync",
-               "createBQDataset", "diffBQTable"]
+               "createBQDataset", "diffBQTable", "exportBQTable",
+               "ingestFile", "ingestTable", "softDeleteTable"]
 }

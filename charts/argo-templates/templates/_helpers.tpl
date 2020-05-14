@@ -39,12 +39,12 @@ retryStrategy:
   help: "Count step executions by result status"
   labels:
     - key: status
-      value: "{{status}}"
-  counter: 
+      value: '{{ "{{status}}" }}'
+  counter:
     value: "1"
 - name: realtime_duration
   help: "Realtime measure of step duration"
-  gauge: 
+  gauge:
     realtime: true
-    value: value: "{{duration}}"
+    value: value: '{{ "{{duration}}" }}'
 {{- end -}}
