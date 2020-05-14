@@ -17,3 +17,9 @@ diffBQTable:
   generateMetrics: false
 exportBQTable:
   create: false
+ingestFile:
+  ingest: false
+ingestTable:
+  create: false
+softDeleteTable:
+  create: false
