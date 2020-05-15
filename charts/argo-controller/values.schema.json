@@ -88,7 +88,14 @@
         "port": { "type": "integer" }
       },
       "required": ["enabled", "port", "path"]
+    },
+    "logs": {
+      "type": "object",
+      "properties": {
+        "bucket": {"type": "string"}
+      },
+      "required": ["bucket"]
     }
   },
-  "required": ["executor", "persistence", "rbac", "debug", "clusterName", "workflowDefaults"]
+  "required": ["executor", "persistence", "rbac", "debug", "clusterName", "workflowDefaults", "logs"]
 }
