@@ -16,6 +16,8 @@ spec:
           - name: timeout
           - name: sa-secret
           - name: sa-secret-key
+          - name: sa-secret-volume
+          - name: volume-mount-path
       dag:
         tasks:
           # 1) Make a post request to the Jade API to ingest the table
@@ -51,8 +53,10 @@ spec:
                   value: '{{ "{{inputs.parameters.sa-secret}}" }}'
                 - name: sa-secret-key
                   value: '{{ "{{inputs.parameters.sa-secret-key}}" }}'
-    {{- $secretVolume := "sa-secret-volume" }}
-    {{- $mountPath := "/secret" }}
+                - name: sa-secret-volume
+                  value: '{{ "{{inputs.parameters.sa-secret-volume}}" }}'
+                - name: volume-mount-path
+                  value: '{{ "{{inputs.parameters.volume-mount-path}}" }}'
     # SubTemplates
     - name: submit-table-ingest
       inputs:
@@ -64,7 +68,7 @@ spec:
           - name: sa-secret
           - name: sa-secret-key
       volumes:
-        - name: '{{ $secretVolume }}'
+        - name: '{{ "{{inputs.parameters.sa-secret-volume}}" }}'
           secret:
             secretName: '{{ "{{inputs.parameters.sa-secret}}" }}'
       script:
@@ -79,40 +83,11 @@ spec:
           - name: TABLE_NAME
             value: '{{ "{{inputs.parameters.table-name}}" }}'
           - name: GOOGLE_APPLICATION_CREDENTIALS
-            value: '{{ printf "%s/{{inputs.parameters.sa-secret-key}}" $mountPath }}'
+            value: '{{ printf "{{inputs.parameters.volume-mount-path}}/{{inputs.parameters.sa-secret-key}}" }}'
         volumeMounts:
-          - name: '{{ $secretVolume }}'
-            mountPath: '{{ $mountPath }}'
+          - name: '{{ "{{inputs.parameters.sa-secret-volume}}" }}'
+            mountPath: '{{ "{{inputs.parameters.volume-mount-path}}" }}'
         command: [python]
         source: |
           {{- include "argo.render-lines" (.Files.Lines "scripts/submit-table-ingest.py") | indent 10 }}
-    - name: poll-ingest-job
-      inputs:
-        parameters:
-          - name: url
-          - name: job-id
-          - name: timeout
-          - name: sa-secret
-          - name: sa-secret-key
-      volumes:
-        - name: '{{ $secretVolume }}'
-          secret:
-            secretName: '{{ "{{inputs.parameters.sa-secret}}" }}'
-      script:
-        image: us.gcr.io/broad-dsp-gcr-public/monster-auth-req-py:1.0.1
-        env:
-          - name: API_URL
-            value: '{{ "{{inputs.parameters.url}}" }}'
-          - name: JOB_ID
-            value: '{{ "{{inputs.parameters.job-id}}" }}'
-          - name: TIMEOUT
-            value: '{{ "{{inputs.parameters.timeout}}" }}'
-          - name: GOOGLE_APPLICATION_CREDENTIALS
-            value: '{{ printf "%s/{{inputs.parameters.sa-secret-key}}" $mountPath }}'
-        volumeMounts:
-          - name: '{{ $secretVolume }}'
-            mountPath: '{{ $mountPath }}'
-        command: [python]
-        source: |
-          {{- include "argo.render-lines" (.Files.Lines "scripts/poll-ingest-job.py") | indent 10 }}
 {{- end }}

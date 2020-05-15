@@ -17,6 +17,8 @@ spec:
           - name: timeout
           - name: sa-secret
           - name: sa-secret-key
+          - name: sa-secret-volume
+          - name: volume-mount-path
       dag:
         tasks:
           # 1) Make sure that something doesn't already exist at the target path
@@ -72,6 +74,10 @@ spec:
                   value: '{{ "{{inputs.parameters.sa-secret}}" }}'
                 - name: sa-secret-key
                   value: '{{ "{{inputs.parameters.sa-secret-key}}" }}'
+                - name: sa-secret-volume
+                  value: '{{ "{{inputs.parameters.sa-secret-volume}}" }}'
+                - name: volume-mount-path
+                  value: '{{ "{{inputs.parameters.volume-mount-path}}" }}'
           # 4) Return the fileId
           - name: get-job-result
             dependencies: [poll-ingest-job]
@@ -96,8 +102,6 @@ spec:
             valueFrom:
               parameter: '{{ "{{tasks.get-job-result.outputs.result}}" }}'
               default: 'null'
-    {{- $secretVolume := "sa-secret-volume" }}
-    {{- $mountPath := "/secret" }}
     # SubTemplates
     - name: check-existing-file
       inputs:
@@ -108,7 +112,7 @@ spec:
           - name: sa-secret
           - name: sa-secret-key
       volumes:
-        - name: '{{ $secretVolume }}'
+        - name: '{{ "{{inputs.parameters.sa-secret-volume}}" }}'
           secret:
             secretName: '{{ "{{inputs.parameters.sa-secret}}" }}'
       script:
@@ -121,10 +125,10 @@ spec:
           - name: TARGET_PATH
             value: '{{ "{{inputs.parameters.target-path}}" }}'
           - name: GOOGLE_APPLICATION_CREDENTIALS
-            value: '{{ printf "%s/{{inputs.parameters.sa-secret-key}}" $mountPath }}'
+            value: '{{ printf "{{inputs.parameters.volume-mount-path}}/{{inputs.parameters.sa-secret-key}}" }}'
         volumeMounts:
-          - name: '{{ $secretVolume }}'
-            mountPath: '{{ $mountPath }}'
+          - name: '{{ "{{inputs.parameters.sa-secret-volume}}" }}'
+            mountPath: '{{ "{{inputs.parameters.volume-mount-path}}" }}'
         command: [python]
         source: |
           {{- include "argo.render-lines" (.Files.Lines "scripts/check-existing-file.py") | indent 10 }}
@@ -139,7 +143,7 @@ spec:
           - name: sa-secret
           - name: sa-secret-key
       volumes:
-        - name: '{{ $secretVolume }}'
+        - name: '{{ "{{inputs.parameters.sa-secret-volume}}" }}'
           secret:
             secretName: '{{ "{{inputs.parameters.sa-secret}}" }}'
       script:
@@ -156,42 +160,13 @@ spec:
           - name: TARGET_PATH
             value: '{{ "{{inputs.parameters.target-path}}" }}'
           - name: GOOGLE_APPLICATION_CREDENTIALS
-            value: '{{ printf "%s/{{inputs.parameters.sa-secret-key}}" $mountPath }}'
+            value: '{{ printf "{{inputs.parameters.volume-mount-path}}/{{inputs.parameters.sa-secret-key}}" }}'
         volumeMounts:
-          - name: '{{ $secretVolume }}'
-            mountPath: '{{ $mountPath }}'
+          - name: '{{ "{{inputs.parameters.sa-secret-volume}}" }}'
+            mountPath: '{{ "{{inputs.parameters.volume-mount-path}}" }}'
         command: [python]
         source: |
           {{- include "argo.render-lines" (.Files.Lines "scripts/submit-file-ingest.py") | indent 10 }}
-    - name: poll-ingest-job
-      inputs:
-        parameters:
-          - name: api-url
-          - name: job-id
-          - name: timeout
-          - name: sa-secret
-          - name: sa-secret-key
-      volumes:
-        - name: '{{ $secretVolume }}'
-          secret:
-            secretName: '{{ "{{inputs.parameters.sa-secret}}" }}'
-      script:
-        image: us.gcr.io/broad-dsp-gcr-public/monster-auth-req-py:1.0.1
-        env:
-          - name: API_URL
-            value: '{{ "{{inputs.parameters.api-url}}" }}'
-          - name: JOB_ID
-            value: '{{ "{{inputs.parameters.job-id}}" }}'
-          - name: TIMEOUT
-            value: '{{ "{{inputs.parameters.timeout}}" }}'
-          - name: GOOGLE_APPLICATION_CREDENTIALS
-            value: '{{ printf "%s/{{inputs.parameters.sa-secret-key}}" $mountPath }}'
-        volumeMounts:
-          - name: '{{ $secretVolume }}'
-            mountPath: '{{ $mountPath }}'
-        command: [python]
-        source: |
-          {{- include "argo.render-lines" (.Files.Lines "scripts/poll-ingest-job.py") | indent 10 }}
     - name: get-job-result
       inputs:
         parameters:
@@ -200,7 +175,7 @@ spec:
           - name: sa-secret
           - name: sa-secret-key
       volumes:
-        - name: '{{ $secretVolume }}'
+        - name: '{{ "{{inputs.parameters.sa-secret-volume}}" }}'
           secret:
             secretName: '{{ "{{inputs.parameters.sa-secret}}" }}'
       script:
@@ -213,10 +188,10 @@ spec:
           - name: RESULT_FIELD
             value: fileId
           - name: GOOGLE_APPLICATION_CREDENTIALS
-            value: '{{ printf "%s/{{inputs.parameters.sa-secret-key}}" $mountPath }}'
+            value: '{{ printf "{{inputs.parameters.volume-mount-path}}/{{inputs.parameters.sa-secret-key}}" }}'
         volumeMounts:
-          - name: '{{ $secretVolume }}'
-            mountPath: '{{ $mountPath }}'
+          - name: '{{ "{{inputs.parameters.sa-secret-volume}}" }}'
+            mountPath: '{{ "{{inputs.parameters.volume-mount-path}}" }}'
         command: [python]
         source: |
           {{- include "argo.render-lines" (.Files.Lines "scripts/get-job-result.py") | indent 10 }}
