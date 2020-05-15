@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: WorkflowTemplate
 metadata:
-  name: poll-ingest-job
+  name: poll-job
 spec:
   templates:
     - name: main

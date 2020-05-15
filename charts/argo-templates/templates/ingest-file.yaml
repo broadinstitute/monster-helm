@@ -60,7 +60,9 @@ spec:
           # 3) Poll the ingest job for the file repeatedly until the file has been ingested
           - name: poll-ingest-job
             dependencies: [submit-file-ingest]
-            template: poll-ingest-job
+            templateRef:
+              name: poll-job
+              template: main
             when: '{{ "{{tasks.check-existing-file.outputs.result}} == false" }}'
             arguments:
               parameters:
