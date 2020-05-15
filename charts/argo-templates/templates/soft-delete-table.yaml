@@ -16,8 +16,6 @@ spec:
           - name: timeout
           - name: sa-secret
           - name: sa-secret-key
-          - name: sa-secret-volume
-          - name: volume-mount-path
       dag:
         tasks:
           # 1) Make a post request to the Jade API to ingest the table
@@ -41,7 +39,7 @@ spec:
           - name: poll-delete-job
             dependencies: [submit-soft-delete]
             templateRef:
-              name: poll-job
+              name: poll-ingest-job
               template: main
             arguments:
               parameters:
@@ -55,11 +53,10 @@ spec:
                   value: '{{ "{{inputs.parameters.sa-secret}}" }}'
                 - name: sa-secret-key
                   value: '{{ "{{inputs.parameters.sa-secret-key}}" }}'
-                - name: sa-secret-volume
-                  value: '{{ "{{inputs.parameters.sa-secret-volume}}" }}'
-                - name: volume-mount-path
-                  value: '{{ "{{inputs.parameters.volume-mount-path}}" }}'
+    {{- $secretVolume := "sa-secret-volume" }}
+    {{- $mountPath := "/secret" }}
     # SubTemplates
+    {{- include "argo.poll-ingest-job" . | indent 4 }}
     - name: submit-soft-delete
       inputs:
         parameters:
@@ -70,7 +67,7 @@ spec:
           - name: sa-secret
           - name: sa-secret-key
       volumes:
-        - name: '{{ "{{inputs.parameters.sa-secret-volume}}" }}'
+        - name: '{{ $secretVolume }}'
           secret:
             secretName: '{{ "{{inputs.parameters.sa-secret}}" }}'
       script:
@@ -85,10 +82,10 @@ spec:
           - name: TABLE_NAME
             value: '{{ "{{inputs.parameters.table-name}}" }}'
           - name: GOOGLE_APPLICATION_CREDENTIALS
-            value: '{{ printf "{{inputs.parameters.volume-mount-path}}/{{inputs.parameters.sa-secret-key}}" }}'
+            value: '{{ printf "%s/{{inputs.parameters.sa-secret-key}}" $mountPath }}'
         volumeMounts:
-          - name: '{{ "{{inputs.parameters.sa-secret-volume}}" }}'
-            mountPath: '{{ "{{inputs.parameters.volume-mount-path}}" }}'
+          - name: '{{ $secretVolume }}'
+            mountPath: '{{ $mountPath }}'
         command: [python]
         source: |
           {{- include "argo.render-lines" (.Files.Lines "scripts/submit-table-soft-delete.py") | indent 10 }}
