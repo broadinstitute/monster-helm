@@ -38,9 +38,7 @@ spec:
           # 2) Poll the ingest job for the table repeatedly until the table has been ingested
           - name: poll-ingest-job
             dependencies: [submit-table-ingest]
-            templateRef:
-              name: poll-ingest-job
-              template: main
+            template: poll-ingest-job
             arguments:
               parameters:
                 - name: url
