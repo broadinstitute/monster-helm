@@ -5,6 +5,7 @@ declare -ra BQ_CREATE=(
   --location=US
   mk
   --dataset
+  --force
   "--description=${DESCRIPTION}"
   --default_table_expiration=${EXPIRATION}
   ${PROJECT}:${DATASET}

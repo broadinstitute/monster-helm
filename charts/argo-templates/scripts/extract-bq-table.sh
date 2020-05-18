@@ -12,7 +12,10 @@ declare -ra BQ_EXTRACT=(
   --destination_format=${OUTPUT_FORMAT}
   --print_header=false
 )
-1>&2 ${BQ_EXTRACT[@]} ${PROJECT}:${DATASET}.${TABLE} gs://${GCS_BUCKET}/${GCS_PREFIX}/*
+declare -r OUTPUT_PATTERN=gs://${GCS_BUCKET}/${GCS_PREFIX}/*
+
+1>&2 gsutil -m rm -f ${OUTPUT_PATTERN}
+1>&2 ${BQ_EXTRACT[@]} ${PROJECT}:${DATASET}.${TABLE} ${OUTPUT_PATTERN}
 
 # Echo the GCS prefix back to Argo, to make plumbing it through as an output easier.
 echo ${GCS_PREFIX}
