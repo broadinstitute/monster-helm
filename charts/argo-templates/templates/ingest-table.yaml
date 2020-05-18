@@ -41,7 +41,7 @@ spec:
             template: poll-ingest-job
             arguments:
               parameters:
-                - name: url
+                - name: api-url
                   value: '{{ "{{inputs.parameters.url}}" }}'
                 - name: job-id
                   value: '{{ "{{tasks.submit-table-ingest.outputs.result}}" }}'
