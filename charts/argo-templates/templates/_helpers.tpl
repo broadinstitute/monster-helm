@@ -59,13 +59,15 @@ retryStrategy:
       - name: timeout
       - name: sa-secret
       - name: sa-secret-key
-      - name: secret-volume
   volumes:
-    - name: '{{ "{{inputs.parameters.secret-volume}}" }}'
+    - name: sa-secret-volume
       secret:
         secretName: '{{ "{{inputs.parameters.sa-secret}}" }}'
   script:
     image: us.gcr.io/broad-dsp-gcr-public/monster-auth-req-py:1.0.1
+    volumeMounts:
+      - name: sa-secret-volume
+        mountPath: '/secret'
     env:
       - name: API_URL
         value: '{{ "{{inputs.parameters.api-url}}" }}'
@@ -74,10 +76,7 @@ retryStrategy:
       - name: TIMEOUT
         value: '{{ "{{inputs.parameters.timeout}}" }}'
       - name: GOOGLE_APPLICATION_CREDENTIALS
-        value: '{{ printf "%s/{{inputs.parameters.sa-secret-key}}" $mountPath }}'
-    volumeMounts:
-      - name: '{{ $secretVolume }}'
-        mountPath: '{{ $mountPath }}'
+        value: '{{ "/secret/{{inputs.parameters.sa-secret-key}}" }}'
     command: [python]
     source: |
       {{- include "argo.render-lines" (.Files.Lines "scripts/poll-ingest-job.py") | indent 10 }}

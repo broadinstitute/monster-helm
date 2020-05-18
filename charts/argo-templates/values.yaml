@@ -14,7 +14,6 @@ createBQDataset:
   create: false
 diffBQTable:
   create: false
-  generateMetrics: false
 exportBQTable:
   create: false
 ingestFile:
