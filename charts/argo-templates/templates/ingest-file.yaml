@@ -99,6 +99,7 @@ spec:
     {{- $secretVolume := "sa-secret-volume" }}
     {{- $mountPath := "/secret" }}
     # SubTemplates
+    {{- include "argo.poll-ingest-job" . | indent 4 }}
     - name: check-existing-file
       inputs:
         parameters:
@@ -163,35 +164,6 @@ spec:
         command: [python]
         source: |
           {{- include "argo.render-lines" (.Files.Lines "scripts/submit-file-ingest.py") | indent 10 }}
-    - name: poll-ingest-job
-      inputs:
-        parameters:
-          - name: api-url
-          - name: job-id
-          - name: timeout
-          - name: sa-secret
-          - name: sa-secret-key
-      volumes:
-        - name: '{{ $secretVolume }}'
-          secret:
-            secretName: '{{ "{{inputs.parameters.sa-secret}}" }}'
-      script:
-        image: us.gcr.io/broad-dsp-gcr-public/monster-auth-req-py:1.0.1
-        env:
-          - name: API_URL
-            value: '{{ "{{inputs.parameters.api-url}}" }}'
-          - name: JOB_ID
-            value: '{{ "{{inputs.parameters.job-id}}" }}'
-          - name: TIMEOUT
-            value: '{{ "{{inputs.parameters.timeout}}" }}'
-          - name: GOOGLE_APPLICATION_CREDENTIALS
-            value: '{{ printf "%s/{{inputs.parameters.sa-secret-key}}" $mountPath }}'
-        volumeMounts:
-          - name: '{{ $secretVolume }}'
-            mountPath: '{{ $mountPath }}'
-        command: [python]
-        source: |
-          {{- include "argo.render-lines" (.Files.Lines "scripts/poll-ingest-job.py") | indent 10 }}
     - name: get-job-result
       inputs:
         parameters:

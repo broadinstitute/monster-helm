@@ -38,7 +38,7 @@ spec:
           # 2) Poll the ingest job for the table repeatedly until the table has been ingested
           - name: poll-delete-job
             dependencies: [submit-soft-delete]
-            template: poll-job
+            template: poll-ingest-job
             arguments:
               parameters:
                 - name: url
@@ -54,6 +54,7 @@ spec:
     {{- $secretVolume := "sa-secret-volume" }}
     {{- $mountPath := "/secret" }}
     # SubTemplates
+    {{- include "argo.poll-ingest-job" . | indent 4 }}
     - name: submit-soft-delete
       inputs:
         parameters:
@@ -86,33 +87,4 @@ spec:
         command: [python]
         source: |
           {{- include "argo.render-lines" (.Files.Lines "scripts/submit-table-soft-delete.py") | indent 10 }}
-    - name: poll-job
-      inputs:
-        parameters:
-          - name: url
-          - name: job-id
-          - name: timeout
-          - name: sa-secret
-          - name: sa-secret-key
-      volumes:
-        - name: '{{ $secretVolume }}'
-          secret:
-            secretName: '{{ "{{inputs.parameters.sa-secret}}" }}'
-      script:
-        image: us.gcr.io/broad-dsp-gcr-public/monster-auth-req-py:1.0.1
-        env:
-          - name: API_URL
-            value: '{{ "{{inputs.parameters.url}}" }}'
-          - name: JOB_ID
-            value: '{{ "{{inputs.parameters.job-id}}" }}'
-          - name: TIMEOUT
-            value: '{{ "{{inputs.parameters.timeout}}" }}'
-          - name: GOOGLE_APPLICATION_CREDENTIALS
-            value: '{{ printf "%s/{{inputs.parameters.sa-secret-key}}" $mountPath }}'
-        volumeMounts:
-          - name: '{{ $secretVolume }}'
-            mountPath: '{{ $mountPath }}'
-        command: [python]
-        source: |
-          {{- include "argo.render-lines" (.Files.Lines "scripts/poll-ingest-job.py") | indent 10 }}
 {{- end }}
