@@ -86,33 +86,43 @@
       "properties": {
         "create": { "type": "boolean" },
         "name": { "type": "string" }
-      }
+      },
+      "required": ["create"]
     },
     "ingestFile": {
       "type": "object",
       "properties": {
         "create": { "type": "boolean" },
         "name": { "type": "string" }
-      }
+      },
+      "required": ["create"]
     },
     "ingestTable": {
       "type": "object",
       "properties": {
         "create": { "type": "boolean" },
         "name": { "type": "string" }
-      }
+      },
+      "required": ["create"]
     },
     "softDeleteTable": {
       "type": "object",
       "properties": {
         "create": { "type": "boolean" },
         "name": { "type": "string" }
-      }
+      },
+      "required": ["create"]
+    },
+    "lookupFileId": {
+      "type": "object",
+      "properties": {
+        "create": { "type": "boolean" },
+        "name": { "type": "string" }
+      },
+      "required": ["create"]
     }
   },
-  "required": ["generatePVC", "deletePVC",
-               "downloadFTPFile", "downloadS3File",
-               "copyToGCS", "gsutilRsync",
-               "createBQDataset", "diffBQTable", "exportBQTable",
-               "ingestFile", "ingestTable", "softDeleteTable"]
+  "required": ["generatePVC", "deletePVC", "downloadFTPFile", "downloadS3File",
+               "copyToGCS", "gsutilRsync", "createBQDataset", "diffBQTable", "exportBQTable",
+               "ingestFile", "ingestTable", "softDeleteTable", "lookupFileId"]
 }

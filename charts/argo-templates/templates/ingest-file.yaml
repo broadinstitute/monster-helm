@@ -19,26 +19,10 @@ spec:
           - name: sa-secret-key
       dag:
         tasks:
-          # 1) Make sure that something doesn't already exist at the target path
-          - name: check-existing-file
-            template: check-existing-file
-            arguments:
-              parameters:
-                - name: api-url
-                  value: '{{ "{{inputs.parameters.url}}" }}'
-                - name: dataset-id
-                  value: '{{ "{{inputs.parameters.dataset-id}}" }}'
-                - name: target-path
-                  value: '{{ "{{inputs.parameters.target-path}}" }}'
-                - name: sa-secret
-                  value: '{{ "{{inputs.parameters.sa-secret}}" }}'
-                - name: sa-secret-key
-                  value: '{{ "{{inputs.parameters.sa-secret-key}}" }}'
-          # 2) Make a post request to the Jade API to ingest the xml blob
+          # Submit the ingest request to Jade
           - name: submit-file-ingest
             dependencies: [check-existing-file]
             template: submit-file-ingest
-            when: '{{ "{{tasks.check-existing-file.outputs.result}} == false" }}'
             arguments:
               parameters:
                 - name: api-url
@@ -55,11 +39,11 @@ spec:
                   value: '{{ "{{inputs.parameters.sa-secret}}" }}'
                 - name: sa-secret-key
                   value: '{{ "{{inputs.parameters.sa-secret-key}}" }}'
-          # 3) Poll the ingest job for the file repeatedly until the file has been ingested
+
+          # Poll the ingest job for the file repeatedly until the file has been ingested
           - name: poll-ingest-job
             dependencies: [submit-file-ingest]
             template: poll-ingest-job
-            when: '{{ "{{tasks.check-existing-file.outputs.result}} == false" }}'
             arguments:
               parameters:
                 - name: api-url
@@ -72,11 +56,11 @@ spec:
                   value: '{{ "{{inputs.parameters.sa-secret}}" }}'
                 - name: sa-secret-key
                   value: '{{ "{{inputs.parameters.sa-secret-key}}" }}'
-          # 4) Return the fileId
+
+          # Return the fileId
           - name: get-job-result
             dependencies: [poll-ingest-job]
             template: get-job-result
-            when: '{{ "{{tasks.check-existing-file.outputs.result}} == false" }}'
             arguments:
               parameters:
                 - name: api-url
@@ -89,46 +73,13 @@ spec:
                   value: '{{ "{{inputs.parameters.sa-secret-key}}" }}'
       outputs:
         parameters:
-          - name: file-exists
-            valueFrom:
-              parameter: '{{ "{{tasks.check-existing-file.outputs.result}}" }}'
           - name: file-id
             valueFrom:
               parameter: '{{ "{{tasks.get-job-result.outputs.result}}" }}'
-              default: 'null'
-    {{- $secretVolume := "sa-secret-volume" }}
-    {{- $mountPath := "/secret" }}
+
     # SubTemplates
     {{- include "argo.poll-ingest-job" . | indent 4 }}
-    - name: check-existing-file
-      inputs:
-        parameters:
-          - name: api-url
-          - name: dataset-id
-          - name: target-path
-          - name: sa-secret
-          - name: sa-secret-key
-      volumes:
-        - name: '{{ $secretVolume }}'
-          secret:
-            secretName: '{{ "{{inputs.parameters.sa-secret}}" }}'
-      script:
-        image: us.gcr.io/broad-dsp-gcr-public/monster-auth-req-py:1.0.1
-        env:
-          - name: API_URL
-            value: '{{ "{{inputs.parameters.api-url}}" }}'
-          - name: DATASET_ID
-            value: '{{ "{{inputs.parameters.dataset-id}}" }}'
-          - name: TARGET_PATH
-            value: '{{ "{{inputs.parameters.target-path}}" }}'
-          - name: GOOGLE_APPLICATION_CREDENTIALS
-            value: '{{ printf "%s/{{inputs.parameters.sa-secret-key}}" $mountPath }}'
-        volumeMounts:
-          - name: '{{ $secretVolume }}'
-            mountPath: '{{ $mountPath }}'
-        command: [python]
-        source: |
-          {{- include "argo.render-lines" (.Files.Lines "scripts/check-existing-file.py") | indent 10 }}
+
     - name: submit-file-ingest
       inputs:
         parameters:
@@ -140,7 +91,7 @@ spec:
           - name: sa-secret
           - name: sa-secret-key
       volumes:
-        - name: '{{ $secretVolume }}'
+        - name: sa-secret-volume
           secret:
             secretName: '{{ "{{inputs.parameters.sa-secret}}" }}'
       script:
@@ -157,13 +108,14 @@ spec:
           - name: TARGET_PATH
             value: '{{ "{{inputs.parameters.target-path}}" }}'
           - name: GOOGLE_APPLICATION_CREDENTIALS
-            value: '{{ printf "%s/{{inputs.parameters.sa-secret-key}}" $mountPath }}'
+            value: '{{ "/secret/{{inputs.parameters.sa-secret-key}}" }}'
         volumeMounts:
-          - name: '{{ $secretVolume }}'
-            mountPath: '{{ $mountPath }}'
+          - name: sa-secret-volume
+            mountPath: /secret
         command: [python]
         source: |
-          {{- include "argo.render-lines" (.Files.Lines "scripts/submit-file-ingest.py") | indent 10 }}
+        {{- include "argo.render-lines" (.Files.Lines "scripts/submit-file-ingest.py") | indent 10 }}
+
     - name: get-job-result
       inputs:
         parameters:
@@ -172,7 +124,7 @@ spec:
           - name: sa-secret
           - name: sa-secret-key
       volumes:
-        - name: '{{ $secretVolume }}'
+        - name: sa-secret-volume
           secret:
             secretName: '{{ "{{inputs.parameters.sa-secret}}" }}'
       script:
@@ -185,11 +137,11 @@ spec:
           - name: RESULT_FIELD
             value: fileId
           - name: GOOGLE_APPLICATION_CREDENTIALS
-            value: '{{ printf "%s/{{inputs.parameters.sa-secret-key}}" $mountPath }}'
+            value: '{{ "/secret/{{inputs.parameters.sa-secret-key}}" }}'
         volumeMounts:
-          - name: '{{ $secretVolume }}'
-            mountPath: '{{ $mountPath }}'
+          - name: sa-secret-volume
+            mountPath: /secret
         command: [python]
         source: |
-          {{- include "argo.render-lines" (.Files.Lines "scripts/get-job-result.py") | indent 10 }}
+        {{- include "argo.render-lines" (.Files.Lines "scripts/get-job-result.py") | indent 10 }}
 {{- end }}

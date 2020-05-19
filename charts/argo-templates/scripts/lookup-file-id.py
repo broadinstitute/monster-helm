@@ -11,14 +11,16 @@ target_path = os.environ["TARGET_PATH"]
 
 authed_session = AuthorizedSession(credentials)
 
-def check_file_existence(target_path: str):
+def get_file_id(target_path: str):
     response = authed_session.get(f"{base_url}/api/repository/v1/datasets/{dataset_id}/filesystem/objects",
                                   params={"path": target_path})
     if response.status_code == 200:
-        return "true"
-    elif response.status_code == 404:
-        return "false"
-    else:
+        return response.json()["fileId"]
+    elif response.status_code != 404:
         raise HTTPError(f"Unexpected response, got code of: {response.status_code}")
 
-print(check_file_existence(target_path))
+file_id = get_file_id(target_path)
+if file_id:
+    print(file_id)
+else:
+    print("null")
