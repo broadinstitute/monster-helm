@@ -22,3 +22,5 @@ ingestTable:
   create: false
 softDeleteTable:
   create: false
+lookupFileId:
+  create: false
