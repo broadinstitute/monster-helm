@@ -152,7 +152,6 @@ spec:
           - name: staging-bq-dataset
           - name: jade-bq-project
           - name: jade-bq-dataset
-      {{- include "argo.retry" . | indent 6 }}
       script:
         image: {{ $schemaImage }}
         {{- if $alwaysPull }}
@@ -182,7 +181,6 @@ spec:
           - name: join-table-name
           - name: bq-project
           - name: bq-dataset
-      {{- include "argo.retry" . | indent 6 }}
       script:
         image: {{ $schemaImage }}
         {{- if $alwaysPull }}
@@ -208,7 +206,6 @@ spec:
           - name: join-table-name
           - name: bq-project
           - name: bq-dataset
-      {{- include "argo.retry" . | indent 6 }}
       script:
         image: {{ $schemaImage }}
         {{- if $alwaysPull }}

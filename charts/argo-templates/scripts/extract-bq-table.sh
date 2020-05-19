@@ -14,7 +14,12 @@ declare -ra BQ_EXTRACT=(
 )
 declare -r OUTPUT_PATTERN=gs://${GCS_BUCKET}/${GCS_PREFIX}/*
 
-1>&2 gsutil -m rm -f ${OUTPUT_PATTERN}
+# Wipe out any files already present at the output location.
+# If there are no files the `rm` command will fail, so we tack `|| true`
+# on the end to keep running.
+1>&2 gsutil -m rm ${OUTPUT_PATTERN} || true
+
+# Extract to GCS.
 1>&2 ${BQ_EXTRACT[@]} ${PROJECT}:${DATASET}.${TABLE} ${OUTPUT_PATTERN}
 
 # Echo the GCS prefix back to Argo, to make plumbing it through as an output easier.
