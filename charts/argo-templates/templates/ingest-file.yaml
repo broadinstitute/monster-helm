@@ -21,7 +21,6 @@ spec:
         tasks:
           # Submit the ingest request to Jade
           - name: submit-file-ingest
-            dependencies: [check-existing-file]
             template: submit-file-ingest
             arguments:
               parameters:
