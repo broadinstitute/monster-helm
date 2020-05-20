@@ -24,7 +24,7 @@ spec:
             mountPath: /secret
         env:
           - name: API_URL
-            value: '{{ "{{inputs.parameters.api-url}}" }}'
+            value: '{{ "{{inputs.parameters.url}}" }}'
           - name: DATASET_ID
             value: '{{ "{{inputs.parameters.dataset-id}}" }}'
           - name: TARGET_PATH
