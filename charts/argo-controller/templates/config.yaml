@@ -63,7 +63,7 @@ data:
     path: {{ .path }}
     port: {{ .port }}
   {{- end }}
-  executorResources:
+  executorResources: |
     requests:
       cpu: 100m
       memory: 64Mi
