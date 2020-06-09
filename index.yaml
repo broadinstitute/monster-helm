@@ -3,6 +3,16 @@ entries:
   argo-controller:
   - apiVersion: v2
     appVersion: "2.7"
+    created: "2020-06-09T19:25:01.102085567Z"
+    description: Chart for the Argo workflow controller
+    digest: 940a2a949ae820fdcd3958ca39da94a81a1cb5568e9b7d9f8c977b24d49a9711
+    name: argo-controller
+    type: application
+    urls:
+    - https://github.com/broadinstitute/monster-helm/releases/download/argo-controller-0.7.2/argo-controller-0.7.2.tgz
+    version: 0.7.2
+  - apiVersion: v2
+    appVersion: "2.7"
     created: "2020-06-09T17:57:37.435098817Z"
     description: Chart for the Argo workflow controller
     digest: 8622d73815cbda9050609e394a666e3b75020cc1afdd9224e13fbd51ea297d6b
