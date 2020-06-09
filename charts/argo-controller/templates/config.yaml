@@ -44,15 +44,16 @@ data:
   {{- with .Values.workflowDefaults }}
   {{- if or .podGarbageCollection.enabled .workflowTTL.enabled }}
   workflowDefaults: |
-    {{- if .podGarbageCollection.enabled }}
-    podGC:
-      strategy: {{ .podGarbageCollection.strategy }}
-    {{- end }}
-    {{- if .workflowTTL.enabled }}
-    ttlStrategy:
-      secondsAfterSuccess: {{ .workflowTTL.secondsAfterSuccess }}
-      secondsAfterFailure: {{ .workflowTTL.secondsAfterFailure }}
-    {{- end }}
+    spec:
+      {{- if .podGarbageCollection.enabled }}
+      podGC:
+        strategy: {{ .podGarbageCollection.strategy }}
+      {{- end }}
+      {{- if .workflowTTL.enabled }}
+      ttlStrategy:
+        secondsAfterSuccess: {{ .workflowTTL.secondsAfterSuccess }}
+        secondsAfterFailure: {{ .workflowTTL.secondsAfterFailure }}
+      {{- end }}
   {{- end }}
   {{- end }}
   {{- with .Values.metrics }}
@@ -62,3 +63,12 @@ data:
     path: {{ .path }}
     port: {{ .port }}
   {{- end }}
+  executorResources:
+    requests:
+      cpu: 100m
+      memory: 64Mi
+      ephemeral-storage: 4Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+      ephemeral-storage: 16Mi
