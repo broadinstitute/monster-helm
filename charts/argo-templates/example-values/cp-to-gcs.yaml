@@ -1,0 +1,3 @@
+copyToGCS:
+  create: true
+  name: copy

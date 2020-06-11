@@ -1,0 +1,3 @@
+ingestTable:
+  create: true
+  name: ingest

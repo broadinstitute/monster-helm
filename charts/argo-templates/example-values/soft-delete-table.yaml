@@ -1,0 +1,3 @@
+softDeleteTable:
+  create: true
+  name: sd-table
