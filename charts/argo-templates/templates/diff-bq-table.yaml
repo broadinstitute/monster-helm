@@ -20,6 +20,7 @@ spec:
           - name: staging-bq-dataset
           - name: jade-bq-project
           - name: jade-bq-dataset
+          - name: upsert
       dag:
         tasks:
           # Build a join table containing both IDs to delete and new rows to append.
@@ -56,6 +57,8 @@ spec:
                   value: '{{ "{{inputs.parameters.staging-bq-project}}" }}'
                 - name: bq-dataset
                   value: '{{ "{{inputs.parameters.staging-bq-dataset}}" }}'
+                - name: upsert
+                  value: '{{ "{{inputs.parameters.upsert}}" }}'
           - name: export-deletes
             dependencies: [query-ids-to-delete]
             templateRef:
@@ -181,6 +184,7 @@ spec:
           - name: join-table-name
           - name: bq-project
           - name: bq-dataset
+          - name: upsert
       script:
         image: {{ $schemaImage }}
         {{- if $alwaysPull }}
@@ -195,6 +199,8 @@ spec:
             value: '{{ "{{inputs.parameters.join-table-name}}" }}'
           - name: OUTPUT_PREFIX
             value: '{{ "{{inputs.parameters.table-name}}" }}'
+          - name: UPSERT
+            value: '{{ "{{inputs.parameters.upsert}}" }}'
         command: [bash]
         source: |
         {{- include "argo.render-lines" (.Files.Lines "scripts/query-non-null-row-ids.sh") | indent 10 }}
