@@ -23,6 +23,16 @@ declare -r REPO_KEYS=$(join_by ', ' "${PRIMARY_COLUMNS[@]}")
 
 declare -r TARGET_TABLE=${TABLE}_joined
 
+# Target either the live view or the raw table.
+# Targeting the raw table will prevent re-ingestion of rows that have already
+# been appended & deleted.
+declare JADE_TABLE
+if [[ ${USE_RAW_TABLE} = 'true' ]]; then
+  JADE_TABLE="${JADE_PROJECT}.${JADE_DATASET}.datarepo_raw_${TABLE}_*"
+else
+  JADE_TABLE="${JADE_PROJECT}.${JADE_DATASET}.${TABLE}"
+fi
+
 # Join the data staged in GCS against the existing Jade data, filtering out identical rows.
 # The result is stored back in BigQuery for subsequent processing.
 declare -ra BQ_QUERY=(
@@ -39,7 +49,7 @@ declare -ra BQ_QUERY=(
   --destination_table=${STAGING_PROJECT}:${STAGING_DATASET}.${TARGET_TABLE}
 )
 1>&2 ${BQ_QUERY[@]} "SELECT J.datarepo_row_id, S.*, ${REPO_KEYS}
-  FROM ${TABLE} S FULL JOIN \`${JADE_PROJECT}.${JADE_DATASET}.${TABLE}\` J
+  FROM ${TABLE} S FULL JOIN \`${JADE_TABLE}\` J
   USING (${PK_COLS}) WHERE ${FULL_DIFF}"
 
 # Echo the output table name so Argo can slurp it into a parameter.
