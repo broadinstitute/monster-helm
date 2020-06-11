@@ -33,17 +33,17 @@ spec:
         volumeMounts:
           - name: state
             mountPath: /state
-        {{- $mem := "{{inputs.parameters.memory}}" }}
-        {{- $cpu := "{{inputs.parameters.cpu}}" }}
-        podSpecPatch: |
-          containers:
-            - name: main
-              resources:
-                requests:
-                  memory: {{ $mem }}
-                  cpu: {{ $cpu }}
-                limits:
-                  memory: {{ $mem }}
-                  cpu: {{ $cpu }}
+      {{- $mem := "{{inputs.parameters.memory}}" }}
+      {{- $cpu := "{{inputs.parameters.cpu}}" }}
+      podSpecPatch: |
+        containers:
+          - name: main
+            resources:
+              requests:
+                memory: {{ $mem }}
+                cpu: {{ $cpu }}
+              limits:
+                memory: {{ $mem }}
+                cpu: {{ $cpu }}
 {{- end }}
 {{- end }}
