@@ -1,0 +1,24 @@
+executor: docker
+persistence:
+  host: h
+  port: 1
+  database: d
+  username: u
+  password:
+    secretName: s
+    secretKey: k
+rbac:
+  create: false
+debug: true
+clusterName: c
+workflowDefaults:
+  podGarbageCollection:
+    enabled: false
+  workflowTTL:
+    enabled: false
+metrics:
+  enabled: true
+  path: /met
+  port: 3333
+logs:
+  bucket: buk

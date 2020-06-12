@@ -1,0 +1,16 @@
+storage:
+  diskGib: 10
+  storageClass: s
+connection:
+  port: 10
+  passiveMode:
+    minPort: 11
+    maxPort: 1100
+userSecret:
+  secretName: s
+  usernameKey: k1
+  passwordKey: k2
+rbac:
+  create: true
+serviceAccount:
+  create: false

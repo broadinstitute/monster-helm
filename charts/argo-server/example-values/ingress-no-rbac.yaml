@@ -1,0 +1,19 @@
+persistence:
+  host: h
+  port: 1
+  database: d
+  username: u
+  password:
+    secretName: s
+    secretKey: k
+rbac:
+  create: true
+service:
+  port: 45
+  ingress:
+    create: true
+    ipName: i
+    domainName: domain
+debug: true
+stackdriverProject: p
+clusterName: c

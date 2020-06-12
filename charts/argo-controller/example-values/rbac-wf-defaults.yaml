@@ -1,0 +1,25 @@
+executor: docker
+persistence:
+  host: h
+  port: 1
+  database: d
+  username: u
+  password:
+    secretName: s
+    secretKey: k
+rbac:
+  create: true
+debug: false
+clusterName: c
+workflowDefaults:
+  podGarbageCollection:
+    enabled: true
+    strategy: OnWorkflowCompletion
+  workflowTTL:
+    enabled: true
+    secondsAfterSuccess: 10
+    secondsAfterFailure: 20
+metrics:
+  enabled: false
+logs:
+  bucket: buc

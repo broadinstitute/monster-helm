@@ -1,0 +1,3 @@
+downloadFTPFile:
+  create: true
+  name: download

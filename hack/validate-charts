@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+declare -r SCRIPT_DIR=$(cd $(dirname ${0}) >/dev/null 2>&1 && pwd)
+declare -r REPO_ROOT=$(cd $(dirname ${SCRIPT_DIR}) >/dev/null 2>&1 && pwd)
+
+declare -r CHART_DIR=${REPO_ROOT}/charts
+
+function validate_chart () {
+  local -r chart_dir=$1 values_file=$2
+  local -r tmp=$(mktemp -d -t helm-lint-XXXXX)
+
+  1>&2 echo Attempting to render ${chart_dir} using values ${values_file}...
+  helm dependency update ${chart_dir}
+  helm template ${chart_dir} --values ${values_file} --debug --output-dir ${tmp}
+}
+
+function main () {
+  for chart in ${CHART_DIR}/*; do
+    if [[ -f ${chart}/Chart.yaml && -d ${chart}/example-values ]]; then
+      for values in ${chart}/example-values/*; do
+        validate_chart ${chart} ${values}
+      done
+    fi
+  done
+}
+
+main

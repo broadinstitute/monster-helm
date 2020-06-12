@@ -1,0 +1,4 @@
+diffBQTable:
+  create: true
+  name: diff
+  schemaImageName: schema

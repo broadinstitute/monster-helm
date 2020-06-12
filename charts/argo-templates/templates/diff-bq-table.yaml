@@ -20,6 +20,8 @@ spec:
           - name: staging-bq-dataset
           - name: jade-bq-project
           - name: jade-bq-dataset
+          - name: upsert
+          - name: diff-full-history
       dag:
         tasks:
           # Build a join table containing both IDs to delete and new rows to append.
@@ -41,6 +43,8 @@ spec:
                   value: '{{ "{{inputs.parameters.jade-bq-project}}" }}'
                 - name: jade-bq-dataset
                   value: '{{ "{{inputs.parameters.jade-bq-dataset}}" }}'
+                - name: use-raw-table
+                  value: '{{ "{{inputs.parameters.diff-full-history}}" }}'
 
           # Export the IDs of existing rows that should be soft-deleted.
           - name: query-ids-to-delete
@@ -56,6 +60,8 @@ spec:
                   value: '{{ "{{inputs.parameters.staging-bq-project}}" }}'
                 - name: bq-dataset
                   value: '{{ "{{inputs.parameters.staging-bq-dataset}}" }}'
+                - name: upsert
+                  value: '{{ "{{inputs.parameters.upsert}}" }}'
           - name: export-deletes
             dependencies: [query-ids-to-delete]
             templateRef:
@@ -152,6 +158,7 @@ spec:
           - name: staging-bq-dataset
           - name: jade-bq-project
           - name: jade-bq-dataset
+          - name: use-raw-table
       script:
         image: {{ $schemaImage }}
         {{- if $alwaysPull }}
@@ -170,6 +177,8 @@ spec:
             value: '{{ "{{inputs.parameters.table-name}}" }}'
           - name: GCS_PREFIX
             value: '{{ "gs://{{inputs.parameters.gcs-bucket}}/{{inputs.parameters.input-prefix}}" }}'
+          - name: USE_RAW_TABLE
+            value: '{{ "{{inputs.parameters.use-raw-table}}" }}'
         command: [bash]
         source: |
         {{- include "argo.render-lines" (.Files.Lines "scripts/diff-bq-table.sh") | indent 10 }}
@@ -181,6 +190,7 @@ spec:
           - name: join-table-name
           - name: bq-project
           - name: bq-dataset
+          - name: upsert
       script:
         image: {{ $schemaImage }}
         {{- if $alwaysPull }}
@@ -195,6 +205,8 @@ spec:
             value: '{{ "{{inputs.parameters.join-table-name}}" }}'
           - name: OUTPUT_PREFIX
             value: '{{ "{{inputs.parameters.table-name}}" }}'
+          - name: UPSERT
+            value: '{{ "{{inputs.parameters.upsert}}" }}'
         command: [bash]
         source: |
         {{- include "argo.render-lines" (.Files.Lines "scripts/query-non-null-row-ids.sh") | indent 10 }}
