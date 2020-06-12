@@ -2,7 +2,7 @@ set -euo pipefail
 
 function join_by { local d=$1; shift; echo -n "$1"; shift; printf "%s" "${@/#/$d}"; }
 
-declare -r TARGET_TABLE=${OUTPUT_PREFIX}_rowids
+declare -r TARGET_TABLE=${TABLE}_rowids
 
 # Point to BQ metadata we expect to be present on disk.
 declare -r TABLE_DIR=/bq-metadata/${TABLE}

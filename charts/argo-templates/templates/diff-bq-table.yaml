@@ -203,7 +203,7 @@ spec:
             value: '{{ "{{inputs.parameters.bq-dataset}}" }}'
           - name: INPUT_TABLE
             value: '{{ "{{inputs.parameters.join-table-name}}" }}'
-          - name: OUTPUT_PREFIX
+          - name: TABLE
             value: '{{ "{{inputs.parameters.table-name}}" }}'
           - name: UPSERT
             value: '{{ "{{inputs.parameters.upsert}}" }}'
