@@ -1,7 +1,7 @@
 # monster-helm
 Helm charts for the Monster team in DSP
 
-## Using charts
+## Using Charts
 Charts hosted by this repo are made available via GitHub pages.
 Add the repo using:
 ```bash
@@ -12,26 +12,36 @@ Then install charts using:
 helm install monster/<chart-name>
 ```
 
-## Developing charts
-We don't (yet) have a strict process for testing chart changes. Feel
-free to manually create a new namespace in our dev GKE cluster, and
-run `helm install` from the root of a chart directory to test local
-changes.
+### Available Charts
+* `argo-controller`: Namespace-scoped deployment of the Argo workflow controller,
+                     with persistence enabled.
+* `argo-server`: Cluster-wide deployment of the Argo workflow server + UI, with
+                 HTTPS ingress
+* `argo-templates`: Collection of generic Argo workflow templates, for use across
+                    our ingest pipelines
+* `gcp-managed-cert`: Tiny chart to render a GKE managed TLS certificate
+* `pure-ftpd`: Deployment of an FTP server, backed by a persistent volume
+
+## Developing Charts
+We don't (yet) have a robust process for validating chart changes. For now,
+the best we can automatically do is validate that rendering a chart succeeds,
+and that the result is valid YAML. This validation runs during PRs. It can
+also be run manually using the `hack/validate-charts` script.
+
+In order for validation to run, at least one values YAML must be defined within
+the `example-values` directory of the chart. The content of these YAMLs should
+be valid inputs for the chart, like would be passed to `helm install`.
+
+Finally, just because a chart produces valid YAML doesn't mean it's a
+semantically-valid k8s definition. Feel free to manually `helm install`
+charts into a dev cluster to test local changes before pushing a PR.
+The `helm-operator` can also be configured to pull charts from a git branch,
+if you're testing in a cluster where it's available.
 
 Once you're satisfied with the changes you've made, make sure to update
 (at least) the value of `version` in the chart's `Chart.yaml`.
 
-## Publishing charts
-We don't (yet) have an automated process for publishing charts. To publish
-manually, first create a [GitHub token](https://github.com/settings/tokens)
-with access to all repo scopes. Update your `~/.bash_profile` to export the
-value of the token as `CH_TOKEN`, for example by adding:
-```bash
-export CH_TOKEN=$(cat <path-to-file-containing-token>)
-```
-
-Once you have a token, you can use the [publish script](./hack/publish-charts)
-to push new chart versions.
-```bash
-./hack/publish-charts <chart1> <chart2> ...
-```
+## Publishing Charts
+Charts are published automatically by GitHub actions on updates to master.
+Note that this process is pretty dumb, and will fail if you update a chart
+in any way without bumping its version in `Chart.yaml`.
