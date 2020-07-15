@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - master
-      - dm-tweaks-for-clinvar-DSPDC-1176
 jobs:
   release-charts:
     runs-on: ubuntu-latest

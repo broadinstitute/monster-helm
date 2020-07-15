@@ -46,4 +46,6 @@ Charts are published automatically by GitHub actions on updates to master.
 Note that this process is pretty dumb, and will fail if you update a chart
 in any way without bumping its version in `Chart.yaml`.
 
-TODO ADD NOTE ABOUT TRICK FOR PUBLISHING BRANCHES
+If you want to publish a branch for pre-PR testing, you can do so by adding
+your branch name to the list in the [GH Action](.github/workflows/release-new-charts.yaml).
+You'll still need to bump the version in `Chart.yaml` on every update.
