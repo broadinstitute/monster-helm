@@ -22,6 +22,7 @@ spec:
           - name: jade-bq-dataset
           - name: upsert
           - name: diff-full-history
+          - name: jade-table-pre-filter
       dag:
         tasks:
           # Build a join table containing both IDs to delete and new rows to append.
@@ -45,6 +46,8 @@ spec:
                   value: '{{ "{{inputs.parameters.jade-bq-dataset}}" }}'
                 - name: use-raw-table
                   value: '{{ "{{inputs.parameters.diff-full-history}}" }}'
+                - name: jade-table-pre-filter
+                  value: '{{ "{{inputs.parameters.jade-table-pre-filter}}" }}'
 
           # Export the IDs of existing rows that should be soft-deleted.
           - name: query-ids-to-delete
@@ -159,6 +162,7 @@ spec:
           - name: jade-bq-project
           - name: jade-bq-dataset
           - name: use-raw-table
+          - name: jade-table-pre-filter
       script:
         image: {{ $schemaImage }}
         {{- if $alwaysPull }}
@@ -179,6 +183,8 @@ spec:
             value: '{{ "gs://{{inputs.parameters.gcs-bucket}}/{{inputs.parameters.input-prefix}}" }}'
           - name: USE_RAW_TABLE
             value: '{{ "{{inputs.parameters.use-raw-table}}" }}'
+          - name: JADE_FILTER
+            value: '{{ "{{inputs.parameters.jade-table-pre-filter}}" }}'
         command: [bash]
         source: |
         {{- include "argo.render-lines" (.Files.Lines "scripts/diff-bq-table.sh") | indent 10 }}

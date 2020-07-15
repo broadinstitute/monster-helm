@@ -15,11 +15,11 @@ for c in ${COMPARE_COLS//,/ }; do
 done
 declare -r FULL_DIFF=$(join_by ' OR ' "${COMPARISONS[@]}")
 
-declare -a PRIMARY_COLUMNS=()
+declare -a DATAREPO_PKS=()
 for col in ${PK_COLS//,/ }; do
-  PRIMARY_COLUMNS+=("${col} as datarepo_${col}")
+  DATAREPO_PKS+=("J.${col} as datarepo_${col}")
 done
-declare -r REPO_KEYS=$(join_by ', ' "${PRIMARY_COLUMNS[@]}")
+declare -r REPO_KEYS=$(join_by ', ' "${DATAREPO_PKS[@]}")
 
 declare -r TARGET_TABLE=${TABLE}_joined
 
@@ -28,9 +28,13 @@ declare -r TARGET_TABLE=${TABLE}_joined
 # been appended & deleted.
 declare JADE_TABLE
 if [[ ${USE_RAW_TABLE} = 'true' ]]; then
-  JADE_TABLE="${JADE_PROJECT}.${JADE_DATASET}.datarepo_raw_${TABLE}_*"
+  JADE_TABLE="\`${JADE_PROJECT}.${JADE_DATASET}.datarepo_raw_${TABLE}_*\`"
 else
-  JADE_TABLE="${JADE_PROJECT}.${JADE_DATASET}.${TABLE}"
+  JADE_TABLE="\`${JADE_PROJECT}.${JADE_DATASET}.${TABLE}\`"
+fi
+
+if [[ ! -z "${JADE_FILTER}" ]]; then
+  JADE_TABLE="(SELECT * FROM ${JADE_TABLE} WHERE ${JADE_FILTER})"
 fi
 
 # Join the data staged in GCS against the existing Jade data, filtering out identical rows.
@@ -49,7 +53,7 @@ declare -ra BQ_QUERY=(
   --destination_table=${STAGING_PROJECT}:${STAGING_DATASET}.${TARGET_TABLE}
 )
 1>&2 ${BQ_QUERY[@]} "SELECT J.datarepo_row_id, S.*, ${REPO_KEYS}
-  FROM ${TABLE} S FULL JOIN \`${JADE_TABLE}\` J
+  FROM ${TABLE} S FULL JOIN ${JADE_TABLE} J
   USING (${PK_COLS}) WHERE ${FULL_DIFF}"
 
 # Echo the output table name so Argo can slurp it into a parameter.
