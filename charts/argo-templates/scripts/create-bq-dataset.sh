@@ -11,3 +11,7 @@ declare -ra BQ_CREATE=(
   ${PROJECT}:${DATASET}
 )
 1>&2 "${BQ_CREATE[@]}"
+
+# Print the dataset name so it can be slurped as an
+# output parameter when needed.
+echo ${DATASET}
