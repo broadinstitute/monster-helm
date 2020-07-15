@@ -45,3 +45,5 @@ Once you're satisfied with the changes you've made, make sure to update
 Charts are published automatically by GitHub actions on updates to master.
 Note that this process is pretty dumb, and will fail if you update a chart
 in any way without bumping its version in `Chart.yaml`.
+
+TODO ADD NOTE ABOUT TRICK FOR PUBLISHING BRANCHES
