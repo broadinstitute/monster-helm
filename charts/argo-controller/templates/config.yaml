@@ -65,9 +65,9 @@ data:
   {{- end }}
   executorResources: |
     requests:
-      cpu: 100m
-      memory: 64Mi
-      ephemeral-storage: 4Mi
+      cpu: 200m
+      memory: 256Mi
+      ephemeral-storage: 8Mi
     limits:
       cpu: 500m
       memory: 512Mi
