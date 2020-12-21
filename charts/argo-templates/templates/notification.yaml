@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: notification-templates
+spec:
+  templates:
+    - name: send-slack-notification
+      inputs:
+        parameters:
+          - name: channel-id
+          - name: message-text
+      container:
+        image: curlimages/curl:7.70.0
+        env:
+          - name: OAUTH_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.notification.oauthToken.secretName }}
+                key: {{ .Values.notification.oauthToken.secretKey }}
+        command: [ curl ]
+        args:
+          - -XPOST
+          - -H
+          - 'Content-type: application/json'
+          - -H
+          - 'Authorization: Bearer $(OAUTH_TOKEN)'
+          - -d
+          - '{"text": "{{inputs.parameters.message-text}}", "channel": "{{inputs.parameters.channel-name}}"}'
+          - "https://slack.com/api/chat.postMessage"
