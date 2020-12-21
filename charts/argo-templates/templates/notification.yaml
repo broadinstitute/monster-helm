@@ -1,3 +1,4 @@
+{{- if .Values.notification.create }}
 apiVersion: argoproj.io/v1alpha1
 kind: WorkflowTemplate
 metadata:
@@ -7,8 +8,8 @@ spec:
     - name: send-slack-notification
       inputs:
         parameters:
-          - name: channel-id
-          - name: message-text
+          - name: channel
+          - name: text
       container:
         image: curlimages/curl:7.70.0
         env:
@@ -18,6 +19,8 @@ spec:
                 name: {{ .Values.notification.oauthToken.secretName }}
                 key: {{ .Values.notification.oauthToken.secretKey }}
         command: [ curl ]
+        {{- $text := "{{inputs.parameters.text}}" }}
+        {{- $channel := "{{inputs.parameters.channel}}" }}
         args:
           - -XPOST
           - -H
@@ -25,5 +28,6 @@ spec:
           - -H
           - 'Authorization: Bearer $(OAUTH_TOKEN)'
           - -d
-          - '{"text": "{{inputs.parameters.message-text}}", "channel": "{{inputs.parameters.channel-name}}"}'
+          - '{"text": "{{$text}}", "channel": "{{$channel}}"}'
           - "https://slack.com/api/chat.postMessage"
+{{- end }}
