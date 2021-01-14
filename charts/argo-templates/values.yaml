@@ -24,3 +24,5 @@ softDeleteTable:
   create: false
 lookupFileId:
   create: false
+notification:
+  create: false

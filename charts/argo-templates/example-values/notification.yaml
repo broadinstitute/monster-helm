@@ -1,0 +1,5 @@
+notification:
+  create: true
+  oauthToken:
+    secretName: aaaaa
+    secretKey: bbbbb

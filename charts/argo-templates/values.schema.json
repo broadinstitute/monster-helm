@@ -120,9 +120,45 @@
         "name": { "type": "string" }
       },
       "required": ["create"]
+    },
+    "notification": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "create": {
+              "const": false
+            }
+          },
+          "additionalProperties": false,
+          "required": ["create"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "create": {
+              "type": "boolean"
+            },
+            "oauthToken": {
+              "type": "object",
+              "properties": {
+                "secretName": {
+                  "type": "string"
+                },
+                "secretKey": {
+                  "type": "string"
+                }
+              },
+              "required": ["secretName", "secretKey"]
+            }
+          },
+          "required": ["create", "oauthToken" ]
+        }
+      ]
     }
   },
   "required": ["generatePVC", "deletePVC", "downloadFTPFile", "downloadS3File",
                "copyToGCS", "gsutilRsync", "createBQDataset", "diffBQTable", "exportBQTable",
-               "ingestFile", "ingestTable", "softDeleteTable", "lookupFileId"]
+               "ingestFile", "ingestTable", "softDeleteTable", "lookupFileId",
+               "notification"]
 }
