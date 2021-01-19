@@ -6,11 +6,17 @@ from requests.exceptions import HTTPError
 
 
 def ingest_file(session, base_url: str, dataset_id: str, profile_id: str, source_path: str, target_path: str):
-    response = session.post(f"{base_url}/api/repository/v1/datasets/{dataset_id}/files", json={
-        "profileId": profile_id,
-        "source_path": source_path,
-        "target_path": target_path
-    })
+    body = {
+        "loadArray": [
+            {
+                "sourcePath": source_path,
+                "targetPath": target_path
+            }
+        ],
+        "maxFailedFileLoads": 0,
+        "profileId": profile_id
+    }
+    response = session.post(f"{base_url}/api/repository/v1/datasets/{dataset_id}/files/bulk/array", json=body)
     if response.ok:
         return response.json()["id"]
     else:
