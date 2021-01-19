@@ -1,7 +1,8 @@
+import os
+
 import google.auth
 from google.auth.transport.requests import AuthorizedSession
 from requests.exceptions import HTTPError
-import os
 
 
 def ingest_file(session, base_url: str, dataset_id: str, profile_id: str, source_path: str, target_path: str):
@@ -29,11 +30,9 @@ def authed_session():
 
 if __name__ == '__main__':
     # print the job id to std out
-    result = ingest_file(
-        base_url=os.environ["API_URL"],
-        dataset_id=os.environ["DATASET_ID"],
-        profile_id=os.environ["PROFILE_ID"],
-        source_path=os.environ["SOURCE_PATH"],
-        target_path=os.environ["TARGET_PATH"]
-    )
+    result = ingest_file(base_url=os.environ["API_URL"],
+                         dataset_id=os.environ["DATASET_ID"],
+                         profile_id=os.environ["PROFILE_ID"],
+                         source_path=os.environ["SOURCE_PATH"],
+                         target_path=os.environ["TARGET_PATH"])
     print(result)
