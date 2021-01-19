@@ -30,7 +30,8 @@ def authed_session():
 
 if __name__ == '__main__':
     # print the job id to std out
-    result = ingest_file(base_url=os.environ["API_URL"],
+    result = ingest_file(authed_session(),
+                         base_url=os.environ["API_URL"],
                          dataset_id=os.environ["DATASET_ID"],
                          profile_id=os.environ["PROFILE_ID"],
                          source_path=os.environ["SOURCE_PATH"],
