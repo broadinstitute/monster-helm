@@ -17,6 +17,7 @@ spec:
           - name: timeout
           - name: sa-secret
           - name: sa-secret-key
+          - name: load-tag
       dag:
         tasks:
           # Submit the ingest request to Jade
@@ -38,6 +39,8 @@ spec:
                   value: '{{ "{{inputs.parameters.sa-secret}}" }}'
                 - name: sa-secret-key
                   value: '{{ "{{inputs.parameters.sa-secret-key}}" }}'
+                - name: load-tag
+                  value: '{{ "{{inputs.parameters.load-tag}}" }}'
 
           # Poll the ingest job for the file repeatedly until the file has been ingested
           - name: poll-ingest-job
@@ -89,6 +92,7 @@ spec:
           - name: target-path
           - name: sa-secret
           - name: sa-secret-key
+          - name: load-tag
       volumes:
         - name: sa-secret-volume
           secret:
@@ -108,6 +112,8 @@ spec:
             value: '{{ "{{inputs.parameters.target-path}}" }}'
           - name: GOOGLE_APPLICATION_CREDENTIALS
             value: '{{ "/secret/{{inputs.parameters.sa-secret-key}}" }}'
+          - name: LOAD_TAG
+            value: '{{ "{{inputs.parameters.load-tag}}" }}'
         volumeMounts:
           - name: sa-secret-volume
             mountPath: /secret

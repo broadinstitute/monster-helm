@@ -16,7 +16,10 @@ authed_session = AuthorizedSession(credentials)
 def get_job_result(job_id: str):
     response = authed_session.get(f"{base_url}/api/repository/v1/jobs/{job_id}/result")
     if response.ok:
-        return response.json()[result_field]
+        results = response.json()['loadFileResults']
+        if len(results) > 1:
+            raise Exception(f"Expected 1 file result, got {len(results)} for job_id {job_id}")
+        return results[0][result_field]
     else:
         raise HTTPError(f"Bad response, got code of: {response.status_code}")
 
