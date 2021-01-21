@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - master
-      - arh-dspdc-1344-add-load-tag
 jobs:
   release-charts:
     runs-on: ubuntu-latest
