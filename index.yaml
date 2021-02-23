@@ -175,6 +175,16 @@ entries:
   argo-server:
   - apiVersion: v2
     appVersion: "2.7"
+    created: "2021-02-23T16:11:48.077781001Z"
+    description: Chart for the Argo workflow server
+    digest: 6a7111151493a0431e790c35f834632fe7ddab48b3575ccffa98722e962b9a8d
+    name: argo-server
+    type: application
+    urls:
+    - https://github.com/broadinstitute/monster-helm/releases/download/argo-server-0.7.3/argo-server-0.7.3.tgz
+    version: 0.7.3
+  - apiVersion: v2
+    appVersion: "2.7"
     created: "2020-06-12T13:06:28.224159714Z"
     description: Chart for the Argo workflow server
     digest: d6158b64d06e73710f0cf93cb2de161b1dde9afda3337251cdc32c9f7945e696
