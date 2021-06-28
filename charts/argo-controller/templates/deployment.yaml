@@ -28,6 +28,8 @@ spec:
             {{- end }}
           {{- if .Values.debug }}
           env:
+            - name: ALWAYS_OFFLOAD_NODE_STATUS
+              value: "true"
             - name: UPPERIO_DB_DEBUG
               value: "1"
           {{- end }}
