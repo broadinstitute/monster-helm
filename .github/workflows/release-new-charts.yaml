@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - master
-      - arh-shave-yak2
 jobs:
   release-charts:
     runs-on: ubuntu-latest
