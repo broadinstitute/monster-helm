@@ -26,13 +26,11 @@ spec:
             - --loglevel
             - debug
             {{- end }}
-          {{- if .Values.debug }}
           env:
             - name: ALWAYS_OFFLOAD_NODE_STATUS
               value: "true"
             - name: UPPERIO_DB_DEBUG
               value: "1"
-          {{- end }}
           {{- if .Values.metrics.enabled }}
           ports:
             - containerPort: {{ .Values.metrics.port }}
