@@ -9,6 +9,7 @@ metadata:
 spec:
   templates:
     - name: main
+      {{- include "argo.retry" . | indent 6 }}
       inputs:
         parameters:
           - name: table-name
