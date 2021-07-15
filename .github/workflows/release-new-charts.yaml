@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - master
-      - arh-dspdc-1864-retry-bq-ops
 jobs:
   release-charts:
     runs-on: ubuntu-latest
