@@ -72,6 +72,7 @@ spec:
                   value: '{{ "{{inputs.parameters.staging-bq-dataset}}" }}'
                 - name: upsert
                   value: '{{ "{{inputs.parameters.upsert}}" }}'
+                  
          - name: export-deletes
             dependencies: [query-ids-to-delete]
             templateRef:
