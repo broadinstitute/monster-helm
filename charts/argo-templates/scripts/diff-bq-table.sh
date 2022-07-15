@@ -41,7 +41,7 @@ fi
 # The result is stored back in BigQuery for subsequent processing.
 declare -ra BQ_QUERY=(
   bq
-  --location=US
+  --location=${REGION}
   --project_id=${STAGING_PROJECT}
   --synchronous_mode=true
   --headless=true

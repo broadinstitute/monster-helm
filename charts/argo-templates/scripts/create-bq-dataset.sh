@@ -2,7 +2,7 @@ set -euo pipefail
 
 declare -ra BQ_CREATE=(
   bq
-  --location=US
+  --location=${REGION}
   mk
   --dataset
   --force

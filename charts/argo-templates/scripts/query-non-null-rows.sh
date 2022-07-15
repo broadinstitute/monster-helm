@@ -24,7 +24,7 @@ declare -r TARGET_TABLE=${TABLE}_values
 # the results of a query to GCS.
 declare -ra BQ_QUERY=(
   bq
-  --location=US
+  --location=${REGION}
   --project_id=${PROJECT}
   --synchronous_mode=true
   --headless=true

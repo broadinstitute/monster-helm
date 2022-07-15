@@ -3,7 +3,7 @@ set -euo pipefail
 # Extract the table's contents into part-files in GCS.
 declare -ra BQ_EXTRACT=(
   bq
-  --location=US
+  --location=${REGION}
   --project_id=${PROJECT}
   --synchronous_mode=true
   --headless=true

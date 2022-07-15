@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - master
+      - ah_BQ_region
 jobs:
   release-charts:
     runs-on: ubuntu-latest

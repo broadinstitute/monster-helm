@@ -24,7 +24,7 @@ declare -r FULL_DIFF=$(join_by ' AND ' "${COMPARISONS[@]}")
 # a table because you can't directly export the results of a query to GCS.
 declare -ra BQ_QUERY=(
   bq
-  --location=US
+  --location=${REGION}
   --project_id=${PROJECT}
   --synchronous_mode=true
   --headless=true
