@@ -24,6 +24,7 @@ spec:
           - name: upsert
           - name: diff-full-history
           - name: jade-table-pre-filter
+          - name: bq-region
       dag:
         tasks:
           # Build a join table containing both IDs to delete and new rows to append.
@@ -49,6 +50,9 @@ spec:
                   value: '{{ "{{inputs.parameters.diff-full-history}}" }}'
                 - name: jade-table-pre-filter
                   value: '{{ "{{inputs.parameters.jade-table-pre-filter}}" }}'
+                - name: bq-region
+                  value: '{{ "{{inputs.parameters.bq-region}}" }}'
+
 
           # Export the IDs of existing rows that should be soft-deleted.
           - name: query-ids-to-delete
@@ -60,19 +64,23 @@ spec:
                   value: '{{ "{{inputs.parameters.table-name}}" }}'
                 - name: join-table-name
                   value: '{{ "{{tasks.join-staging-to-existing.outputs.result}}" }}'
+                - name: bq-region
+                  value: '{{ "{{inputs.parameters.bq-region}}" }}'
                 - name: bq-project
                   value: '{{ "{{inputs.parameters.staging-bq-project}}" }}'
                 - name: bq-dataset
                   value: '{{ "{{inputs.parameters.staging-bq-dataset}}" }}'
                 - name: upsert
                   value: '{{ "{{inputs.parameters.upsert}}" }}'
-          - name: export-deletes
+         - name: export-deletes
             dependencies: [query-ids-to-delete]
             templateRef:
               name: {{ $exportTemplate }}
               template: main
             arguments:
               parameters:
+                - name: bq-region
+                  value: '{{ "{{inputs.parameters.bq-region}}" }}'
                 - name: bq-project
                   value: '{{ "{{inputs.parameters.staging-bq-project}}" }}'
                 - name: bq-dataset
@@ -96,6 +104,8 @@ spec:
                   value: '{{ "{{inputs.parameters.table-name}}" }}'
                 - name: join-table-name
                   value: '{{ "{{tasks.join-staging-to-existing.outputs.result}}" }}'
+                - name: bq-region
+                  value: '{{ "{{inputs.parameters.bq-region}}" }}'
                 - name: bq-project
                   value: '{{ "{{inputs.parameters.staging-bq-project}}" }}'
                 - name: bq-dataset
@@ -107,6 +117,8 @@ spec:
               template: main
             arguments:
               parameters:
+                - name: bq-region
+                  value: '{{ "{{inputs.parameters.bq-region}}" }}'
                 - name: bq-project
                   value: '{{ "{{inputs.parameters.staging-bq-project}}" }}'
                 - name: bq-dataset
@@ -164,6 +176,7 @@ spec:
           - name: jade-bq-dataset
           - name: use-raw-table
           - name: jade-table-pre-filter
+          - name: bq-region
       script:
         image: {{ $schemaImage }}
         {{- if $alwaysPull }}
@@ -186,6 +199,8 @@ spec:
             value: '{{ "{{inputs.parameters.use-raw-table}}" }}'
           - name: JADE_FILTER
             value: '{{ "{{inputs.parameters.jade-table-pre-filter}}" }}'
+          - name: REGION
+            value: '{{ "{{inputs.parameters.bq-region}}" }}'
         command: [bash]
         source: |
         {{- include "argo.render-lines" (.Files.Lines "scripts/diff-bq-table.sh") | indent 10 }}
@@ -195,6 +210,7 @@ spec:
         parameters:
           - name: table-name
           - name: join-table-name
+          - name: bq-region
           - name: bq-project
           - name: bq-dataset
           - name: upsert
@@ -204,6 +220,8 @@ spec:
         imagePullPolicy: Always
         {{- end }}
         env:
+          - name: REGION
+            value: '{{ "{{inputs.parameters.bq-region}}" }}'
           - name: PROJECT
             value: '{{ "{{inputs.parameters.bq-project}}" }}'
           - name: DATASET
@@ -223,6 +241,7 @@ spec:
         parameters:
           - name: table-name
           - name: join-table-name
+          - name: bq-region
           - name: bq-project
           - name: bq-dataset
       script:
@@ -239,6 +258,8 @@ spec:
             value: '{{ "{{inputs.parameters.join-table-name}}" }}'
           - name: TABLE
             value: '{{ "{{inputs.parameters.table-name}}" }}'
+          - name: REGION
+            value: '{{ "{{inputs.parameters.bq-region}}" }}'
         command: [bash]
         source: |
         {{- include "argo.render-lines" (.Files.Lines "scripts/query-non-null-rows.sh") | indent 10 }}
