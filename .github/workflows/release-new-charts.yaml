@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - master
-      - ah_BQ_region
+      - ah_encode_version
 jobs:
   release-charts:
     runs-on: ubuntu-latest
