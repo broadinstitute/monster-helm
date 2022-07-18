@@ -4,7 +4,7 @@ set -euo pipefail
 # The single value will be printed to stdout, and slurped by Argo.
 declare -ra BQ_QUERY=(
   bq
-  --location=US
+  --location=${REGION}
   --project_id=${PROJECT}
   --synchronous_mode=true
   --headless=true

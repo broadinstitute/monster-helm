@@ -8,6 +8,7 @@ spec:
     - name: main
       inputs:
         parameters:
+          - name: bq-region
           - name: bq-project
           - name: bq-dataset
           - name: bq-table
@@ -20,6 +21,8 @@ spec:
             template: get-bq-table-size
             arguments:
               parameters:
+                - name: bq-region
+                  value: '{{ "{{inputs.parameters.bq-region}}" }}'
                 - name: bq-project
                   value: '{{ "{{inputs.parameters.bq-project}}" }}'
                 - name: bq-dataset
@@ -32,6 +35,8 @@ spec:
             template: extract-bq-table
             arguments:
               parameters:
+                - name: bq-region
+                  value: '{{ "{{inputs.parameters.bq-region}}" }}'
                 - name: bq-project
                   value: '{{ "{{inputs.parameters.bq-project}}" }}'
                 - name: bq-dataset
@@ -54,12 +59,15 @@ spec:
     - name: get-bq-table-size
       inputs:
         parameters:
+          - name: bq-region
           - name: bq-project
           - name: bq-dataset
           - name: bq-table
       script:
         image: google/cloud-sdk:slim
         env:
+          - name: REGION
+            value: '{{ "{{inputs.parameters.bq-region}}" }}'
           - name: PROJECT
             value: '{{ "{{inputs.parameters.bq-project}}" }}'
           - name: DATASET
@@ -73,6 +81,7 @@ spec:
     - name: extract-bq-table
       inputs:
         parameters:
+          - name: bq-region
           - name: bq-table
           - name: bq-project
           - name: bq-dataset
@@ -82,6 +91,8 @@ spec:
       script:
         image: google/cloud-sdk:slim
         env:
+          - name: REGION
+            value: '{{ "{{inputs.parameters.bq-region}}" }}'
           - name: PROJECT
             value: '{{ "{{inputs.parameters.bq-project}}" }}'
           - name: DATASET

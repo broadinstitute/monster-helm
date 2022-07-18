@@ -20,6 +20,7 @@ spec:
           - name: staging-bq-dataset
           - name: jade-bq-project
           - name: jade-bq-dataset
+          - name: bq-region
       dag:
         tasks:
           # Build a join table containing both IDs to delete and new rows to append.
@@ -42,6 +43,9 @@ spec:
                 - name: jade-bq-dataset
                   value: '{{ "{{inputs.parameters.jade-bq-dataset}}" }}'
 
+                - name: bq-region
+                  value: '{{ "{{inputs.parameters.bq-region}}" }}'
+
           # Export the IDs of existing rows that should be soft-deleted.
           - name: query-ids-to-delete
             dependencies: [join-staging-to-existing]
@@ -52,6 +56,8 @@ spec:
                   value: '{{ "{{inputs.parameters.table-name}}" }}'
                 - name: join-table-name
                   value: '{{ "{{tasks.join-staging-to-existing.outputs.result}}" }}'
+                - name: bq-region
+                  value: '{{ "{{inputs.parameters.bq-region}}" }}'
                 - name: bq-project
                   value: '{{ "{{inputs.parameters.staging-bq-project}}" }}'
                 - name: bq-dataset
@@ -63,6 +69,8 @@ spec:
               template: main
             arguments:
               parameters:
+                - name: bq-region
+                  value: '{{ "{{inputs.parameters.bq-region}}" }}'
                 - name: bq-project
                   value: '{{ "{{inputs.parameters.staging-bq-project}}" }}'
                 - name: bq-dataset
@@ -86,6 +94,8 @@ spec:
                   value: '{{ "{{inputs.parameters.table-name}}" }}'
                 - name: join-table-name
                   value: '{{ "{{tasks.join-staging-to-existing.outputs.result}}" }}'
+                - name: bq-region
+                  value: '{{ "{{inputs.parameters.bq-region}}" }}'
                 - name: bq-project
                   value: '{{ "{{inputs.parameters.staging-bq-project}}" }}'
                 - name: bq-dataset
@@ -97,6 +107,8 @@ spec:
               template: main
             arguments:
               parameters:
+                - name: bq-region
+                  value: '{{ "{{inputs.parameters.bq-region}}" }}'
                 - name: bq-project
                   value: '{{ "{{inputs.parameters.staging-bq-project}}" }}'
                 - name: bq-dataset
@@ -152,6 +164,7 @@ spec:
           - name: staging-bq-dataset
           - name: jade-bq-project
           - name: jade-bq-dataset
+          - name: bq-region
       script:
         image: {{ $schemaImage }}
         {{- if $alwaysPull }}
@@ -170,6 +183,8 @@ spec:
             value: '{{ "{{inputs.parameters.table-name}}" }}'
           - name: GCS_PREFIX
             value: '{{ "gs://{{inputs.parameters.gcs-bucket}}/{{inputs.parameters.input-prefix}}" }}'
+          - name: REGION
+            value: '{{ "{{inputs.parameters.bq-region}}" }}'
         command: [bash]
         source: |
         {{- include "argo.render-lines" (.Files.Lines "scripts/diff-bq-table.sh") | indent 10 }}
@@ -179,6 +194,7 @@ spec:
         parameters:
           - name: table-name
           - name: join-table-name
+          - name: bq-region
           - name: bq-project
           - name: bq-dataset
       script:
@@ -187,6 +203,8 @@ spec:
         imagePullPolicy: Always
         {{- end }}
         env:
+          - name: REGION
+            value: '{{ "{{inputs.parameters.bq-region}}" }}'
           - name: PROJECT
             value: '{{ "{{inputs.parameters.bq-project}}" }}'
           - name: DATASET
@@ -204,6 +222,7 @@ spec:
         parameters:
           - name: table-name
           - name: join-table-name
+          - name: bq-region
           - name: bq-project
           - name: bq-dataset
       script:
@@ -220,6 +239,8 @@ spec:
             value: '{{ "{{inputs.parameters.join-table-name}}" }}'
           - name: TABLE
             value: '{{ "{{inputs.parameters.table-name}}" }}'
+          - name: REGION
+            value: '{{ "{{inputs.parameters.bq-region}}" }}'
         command: [bash]
         source: |
         {{- include "argo.render-lines" (.Files.Lines "scripts/query-non-null-rows.sh") | indent 10 }}

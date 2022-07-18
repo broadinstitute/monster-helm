@@ -12,6 +12,7 @@ spec:
           - name: bq-project
           - name: dataset-description
           - name: dataset-expiration
+          - name: bq-region
       script:
         image: google/cloud-sdk:slim
         env:
@@ -23,6 +24,8 @@ spec:
             value: '{{ "{{inputs.parameters.dataset-description}}" }}'
           - name: EXPIRATION
             value: '{{ "{{inputs.parameters.dataset-expiration}}" }}'
+          - name: REGION
+            value: '{{ "{{inputs.parameters.bq-region}}" }}'
         command: [bash]
         source: |
           {{- range .Files.Lines "scripts/create-bq-dataset.sh" }}
